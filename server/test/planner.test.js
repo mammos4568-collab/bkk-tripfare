@@ -1,0 +1,84 @@
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+import { createPlanner } from '../src/core/planner.js';
+import { makeFixture } from './fixtures.js';
+
+const planner = createPlanner(makeFixture());
+const rides = (segment) => segment.legs.filter((l) => l.type === 'ride');
+
+test('เร็วสุด X1 → X4: นั่ง L1 ตรง ๆ 3 จุด', () => {
+  const trip = planner.planTrip(['X1', 'X4'], 'fastest');
+  const [seg] = trip.segments;
+  assert.equal(seg.legs.length, 1);
+  assert.equal(seg.legs[0].line_id, 'L1');
+  assert.equal(seg.legs[0].num_stops, 3);
+  assert.equal(seg.minutes, 2 + 3 * 2); // รอ 2 + นั่ง 6
+  assert.equal(seg.fare, 10 + 2 * 3);
+});
+
+test('ถูกสุด X1 → X4: ยอมนั่งรถเมล์ที่ช้ากว่าแต่ถูกกว่า', () => {
+  const trip = planner.planTrip(['X1', 'X4'], 'cheapest');
+  const [seg] = trip.segments;
+  assert.deepEqual(seg.legs.map((l) => l.type), ['walk', 'ride', 'walk']);
+  assert.equal(seg.legs[1].line_id, 'BUS');
+  assert.equal(seg.fare, 5);
+  assert.equal(seg.minutes, 1 + 5 + 20 + 1);
+});
+
+test('ต่อสายในระบบเดียวกัน (L1 → L2 ที่ X3) คิดเป็นเที่ยวเดียว', () => {
+  const [seg] = planner.planTrip(['X1', 'Y3'], 'fastest').segments;
+  const [first, second] = rides(seg);
+  assert.equal(first.line_id, 'L1');
+  assert.equal(second.line_id, 'L2');
+  assert.equal(first.fare, 10 + 2 * (2 + 1)); // นับจุดรวม 3 จุด
+  assert.equal(second.fare, 0);
+  assert.equal(second.fare_included_in_previous, true);
+  assert.equal(seg.minutes, 2 + 4 + 3 + 3);
+});
+
+test('หลายจุด: ราคาและเวลารวม = ผลรวมของทุกช่วง', () => {
+  const trip = planner.planTrip(['X1', 'X4', 'Y1'], 'fastest');
+  assert.equal(trip.segments.length, 2);
+  assert.equal(trip.total.minutes, trip.segments[0].minutes + trip.segments[1].minutes);
+  assert.equal(trip.total.fare, trip.segments[0].fare + trip.segments[1].fare);
+  assert.equal(trip.total.minutes, 8 + 10);
+  assert.equal(trip.total.fare, 16 + 14);
+  assert.equal(trip.total.transfers, 1); // เปลี่ยน L1 → L2 ในช่วงที่ 2 (ไม่นับการลงที่จุดแวะ)
+});
+
+test('ช่วงที่เดินอย่างเดียว ราคา 0 และไม่นับเป็นการเปลี่ยนรถ', () => {
+  const trip = planner.planTrip(['X1', 'B1'], 'fastest');
+  assert.deepEqual(trip.segments[0].legs.map((l) => l.type), ['walk']);
+  assert.equal(trip.total.fare, 0);
+  assert.equal(trip.total.transfers, 0);
+});
+
+test('นโยบายเพดานราคาที่เปิดอยู่ถูกนำมาใช้', () => {
+  const data = makeFixture();
+  data.fares.policies = [
+    { id: 'cap', modes: ['rail'], max_fare_per_ride: 12, active: true, source: 'test', checked_at: '2026-01-01' },
+  ];
+  const trip = createPlanner(data).planTrip(['X1', 'X4'], 'fastest');
+  assert.equal(trip.total.fare, 12);
+});
+
+test('error: จุดไม่มีอยู่จริง → 404 STOP_NOT_FOUND', () => {
+  assert.throws(() => planner.planTrip(['X1', 'NOPE']), { status: 404, code: 'STOP_NOT_FOUND' });
+});
+
+test('error: ไปไม่ถึง → 422 NO_ROUTE', () => {
+  assert.throws(() => planner.planTrip(['X1', 'Z']), { status: 422, code: 'NO_ROUTE' });
+});
+
+test('error: จุดติดกันซ้ำ / จำนวนจุดผิด / optimize ผิด → 400', () => {
+  assert.throws(() => planner.planTrip(['X1', 'X1']), { status: 400 });
+  assert.throws(() => planner.planTrip(['X1']), { status: 400 });
+  assert.throws(() => planner.planTrip(['X1', 'X2', 'X3', 'X4', 'Y1', 'Y3', 'B1']), { status: 400 });
+  assert.throws(() => planner.planTrip(['X1', 'X4'], 'slowest'), { status: 400 });
+});
+
+test('ค้นหาจุดด้วยชื่อหรือ id และกรองตามประเภท', () => {
+  assert.deepEqual(planner.searchStops({ q: 'x3' }).map((s) => s.id), ['X3']);
+  assert.deepEqual(planner.searchStops({ q: 'X3' })[0].lines.sort(), ['L1', 'L2']);
+  assert.deepEqual(planner.searchStops({ mode: 'bus' }).map((s) => s.id), ['B1', 'B2', 'Z']);
+});

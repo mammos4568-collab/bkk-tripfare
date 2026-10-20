@@ -1,0 +1,50 @@
+{
+  "strategy": "min_total",
+  "best": {
+    "stop_id": "SMP-A1",
+    "name": "[ตัวอย่าง] ต้นสายแดง",
+    "total_fare": 33,
+    "max_fare": 25,
+    "total_minutes": 34
+  },
+  "per_person": [
+    {
+      "origin_index": 0,
+      "fare": 0,
+      "minutes": 0
+    },
+    {
+      "origin_index": 1,
+      "fare": 8,
+      "minutes": 19
+    },
+    {
+      "origin_index": 2,
+      "fare": 25,
+      "minutes": 15
+    }
+  ],
+  "alternatives": [
+    {
+      "stop_id": "SMP-U1",
+      "name": "[ตัวอย่าง] ป้ายรถเมล์หน้าต้นสายแดง",
+      "total_fare": 33,
+      "max_fare": 25,
+      "total_minutes": 37
+    },
+    {
+      "stop_id": "SMP-U3",
+      "name": "[ตัวอย่าง] ป้ายรถเมล์หน้าท่าเรือปลายน้ำ",
+      "total_fare": 46,
+      "max_fare": 38,
+      "total_minutes": 58
+    },
+    {
+      "stop_id": "SMP-P3",
+      "name": "[ตัวอย่าง] ท่าเรือปลายน้ำ",
+      "total_fare": 46,
+      "max_fare": 38,
+      "total_minutes": 62
+    }
+  ]
+}

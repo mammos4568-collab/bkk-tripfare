@@ -1,0 +1,19 @@
+# ฐานข้อมูลสำหรับพัฒนาในเครื่องเท่านั้น (ส่วน C, D)
+#   เปิด:  docker compose up -d
+#   ปิด:   docker compose down        (ข้อมูลยังอยู่)
+#   ล้าง:  docker compose down -v     (ลบข้อมูลทั้งหมด แล้วสร้างตารางใหม่จาก db/schema.sql)
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: tripfare
+      POSTGRES_PASSWORD: tripfare_dev_only # รหัสผ่านสำหรับเครื่องตัวเองเท่านั้น
+      POSTGRES_DB: tripfare
+    ports:
+      - "127.0.0.1:5432:5432" # เปิดให้เฉพาะเครื่องตัวเอง ไม่เปิดออกเครือข่าย
+    volumes:
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/001_schema.sql:ro
+      - dbdata:/var/lib/postgresql/data
+
+volumes:
+  dbdata:

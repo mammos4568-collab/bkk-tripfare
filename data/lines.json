@@ -1,0 +1,46 @@
+[
+  {
+    "id": "SMP-RED",
+    "name_th": "[ตัวอย่าง] สายสีแดงสมมติ",
+    "mode": "rail",
+    "operator": "SAMPLE_RAIL",
+    "stops": ["SMP-A1", "SMP-A2", "SMP-C0", "SMP-A3", "SMP-A4"],
+    "bidirectional": true,
+    "minutes_between_stops": 2.5,
+    "headway_minutes": 6,
+    "fare_rule": "smp_rail"
+  },
+  {
+    "id": "SMP-SKY",
+    "name_th": "[ตัวอย่าง] สายสีฟ้าสมมติ",
+    "mode": "rail",
+    "operator": "SAMPLE_RAIL",
+    "stops": ["SMP-B1", "SMP-C0", "SMP-B2"],
+    "bidirectional": true,
+    "minutes_between_stops": 3,
+    "headway_minutes": 8,
+    "fare_rule": "smp_rail"
+  },
+  {
+    "id": "SMP-BOAT",
+    "name_th": "[ตัวอย่าง] เรือด่วนสมมติ",
+    "mode": "boat",
+    "operator": "SAMPLE_BOAT",
+    "stops": ["SMP-P1", "SMP-P2", "SMP-P3"],
+    "bidirectional": true,
+    "minutes_between_stops": 6,
+    "headway_minutes": 15,
+    "fare_rule": "smp_boat"
+  },
+  {
+    "id": "SMP-BUS1",
+    "name_th": "[ตัวอย่าง] รถเมล์สาย 1 สมมติ",
+    "mode": "bus",
+    "operator": "SAMPLE_BUS",
+    "stops": ["SMP-U1", "SMP-U2", "SMP-U3"],
+    "bidirectional": true,
+    "minutes_between_stops": 5,
+    "headway_minutes": 12,
+    "fare_rule": "smp_bus"
+  }
+]

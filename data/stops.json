@@ -1,0 +1,15 @@
+[
+  { "id": "SMP-A1", "name_th": "[ตัวอย่าง] ต้นสายแดง", "name_en": "[Sample] Red Terminus", "mode": "rail", "lat": 13.8, "lon": 100.55 },
+  { "id": "SMP-A2", "name_th": "[ตัวอย่าง] ตลาดเช้า", "name_en": "[Sample] Morning Market", "mode": "rail", "lat": 13.792, "lon": 100.556 },
+  { "id": "SMP-C0", "name_th": "[ตัวอย่าง] ชุมทางกลาง", "name_en": "[Sample] Central Junction", "mode": "rail", "lat": 13.784, "lon": 100.562 },
+  { "id": "SMP-A3", "name_th": "[ตัวอย่าง] สวนสาธารณะ", "name_en": "[Sample] City Park", "mode": "rail", "lat": 13.776, "lon": 100.568 },
+  { "id": "SMP-A4", "name_th": "[ตัวอย่าง] ปลายสายแดง", "name_en": "[Sample] Red End", "mode": "rail", "lat": 13.768, "lon": 100.574 },
+  { "id": "SMP-B1", "name_th": "[ตัวอย่าง] ต้นสายฟ้า", "name_en": "[Sample] Sky Terminus", "mode": "rail", "lat": 13.79, "lon": 100.575 },
+  { "id": "SMP-B2", "name_th": "[ตัวอย่าง] ริมน้ำ", "name_en": "[Sample] Riverside", "mode": "rail", "lat": 13.778, "lon": 100.55 },
+  { "id": "SMP-P1", "name_th": "[ตัวอย่าง] ท่าเรือริมน้ำ", "name_en": "[Sample] Riverside Pier", "mode": "boat", "lat": 13.777, "lon": 100.547 },
+  { "id": "SMP-P2", "name_th": "[ตัวอย่าง] ท่าเรือวัด", "name_en": "[Sample] Temple Pier", "mode": "boat", "lat": 13.765, "lon": 100.54 },
+  { "id": "SMP-P3", "name_th": "[ตัวอย่าง] ท่าเรือปลายน้ำ", "name_en": "[Sample] Downstream Pier", "mode": "boat", "lat": 13.752, "lon": 100.535 },
+  { "id": "SMP-U1", "name_th": "[ตัวอย่าง] ป้ายรถเมล์หน้าต้นสายแดง", "name_en": "[Sample] Bus Stop at Red Terminus", "mode": "bus", "lat": 13.801, "lon": 100.548 },
+  { "id": "SMP-U2", "name_th": "[ตัวอย่าง] ป้ายรถเมล์หน้าโรงเรียน", "name_en": "[Sample] School Bus Stop", "mode": "bus", "lat": 13.776, "lon": 100.541 },
+  { "id": "SMP-U3", "name_th": "[ตัวอย่าง] ป้ายรถเมล์หน้าท่าเรือปลายน้ำ", "name_en": "[Sample] Bus Stop at Downstream Pier", "mode": "bus", "lat": 13.753, "lon": 100.537 }
+]

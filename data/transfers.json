@@ -1,0 +1,5 @@
+[
+  { "from": "SMP-A1", "to": "SMP-U1", "walk_minutes": 3 },
+  { "from": "SMP-B2", "to": "SMP-P1", "walk_minutes": 5 },
+  { "from": "SMP-U3", "to": "SMP-P3", "walk_minutes": 4 }
+]

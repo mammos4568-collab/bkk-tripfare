@@ -1,0 +1,39 @@
+{
+  "rules": [
+    {
+      "id": "smp_rail",
+      "type": "by_stops",
+      "base": 16,
+      "per_stop": 3,
+      "max": 45,
+      "merge_transfers": true,
+      "source": "SAMPLE: ข้อมูลสมมติ ห้ามใช้จริง",
+      "checked_at": "2026-10-20"
+    },
+    {
+      "id": "smp_boat",
+      "type": "flat",
+      "amount": 16,
+      "source": "SAMPLE: ข้อมูลสมมติ ห้ามใช้จริง",
+      "checked_at": "2026-10-20"
+    },
+    {
+      "id": "smp_bus",
+      "type": "flat",
+      "amount": 8,
+      "source": "SAMPLE: ข้อมูลสมมติ ห้ามใช้จริง",
+      "checked_at": "2026-10-20"
+    }
+  ],
+  "policies": [
+    {
+      "id": "smp_rail_cap",
+      "description": "[ตัวอย่าง] เพดานราคารถไฟฟ้าต่อเที่ยว — เปิด/ปิดตามประกาศจริง",
+      "modes": ["rail"],
+      "max_fare_per_ride": 20,
+      "active": false,
+      "source": "SAMPLE: ข้อมูลสมมติ ห้ามใช้จริง",
+      "checked_at": "2026-10-20"
+    }
+  ]
+}
