@@ -35,9 +35,9 @@
     {
       "stop_id": "SMP-U3",
       "name": "[ตัวอย่าง] ป้ายรถเมล์หน้าท่าเรือปลายน้ำ",
-      "total_fare": 46,
-      "max_fare": 38,
-      "total_minutes": 58
+      "total_fare": 41,
+      "max_fare": 33,
+      "total_minutes": 53
     },
     {
       "stop_id": "SMP-P3",

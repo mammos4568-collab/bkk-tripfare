@@ -8,8 +8,14 @@ import { adminRouter } from './routes/admin.js';
 import { authRouter, meRouter } from './routes/auth.js';
 import { meetupRouter } from './routes/meetup.js';
 import { reportsRouter } from './routes/reports.js';
-import { linesRouter, stopsRouter } from './routes/stops.js';
+import { linesRouter, networkRouter, stopsRouter } from './routes/stops.js';
 import { tripsRouter } from './routes/trips.js';
+
+/**
+ * โดเมนรูปแผนที่ (tile) ที่หน้าเว็บโหลดได้ — ถ้าเปลี่ยนผู้ให้บริการแผนที่ (VITE_TILE_URL ใน client)
+ * ต้องเพิ่มโดเมนที่นี่ด้วย ไม่งั้น CSP จะบล็อกรูปแผนที่ตอน production
+ */
+export const TILE_HOSTS = ['https://tile.openstreetmap.org', 'https://*.basemaps.cartocdn.com'];
 
 export function createApp({ planner, config }) {
   const app = express();
@@ -17,9 +23,14 @@ export function createApp({ planner, config }) {
   // อยู่หลัง proxy ของ Render / Railway → ให้ req.ip เป็น IP จริงของผู้ใช้ (rate limit จะได้ไม่นับรวมกัน)
   app.set('trust proxy', 1);
 
-  // header ความปลอดภัยพื้นฐาน
-  // ถ้าเพิ่มแผนที่ (Leaflet + OpenStreetMap) ต้องเพิ่มโดเมน tile ใน contentSecurityPolicy img-src
-  app.use(helmet());
+  // header ความปลอดภัยพื้นฐาน (CSP อนุญาตรูปแผนที่จาก TILE_HOSTS เพิ่มจากค่าเริ่มต้น)
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: { 'img-src': ["'self'", 'data:', ...TILE_HOSTS] },
+      },
+    }),
+  );
   app.use(express.json({ limit: '10kb' }));
 
   app.use(
@@ -39,6 +50,7 @@ export function createApp({ planner, config }) {
   // ---------- API ----------
   // คนหลัก: หน้าเว็บผู้ใช้
   app.get('/api/health', (req, res) => res.json({ status: 'ok', ...planner.info() }));
+  app.use('/api/network', networkRouter(planner));
   app.use('/api/stops', stopsRouter(planner));
   app.use('/api/lines', linesRouter(planner));
   app.use('/api/trips', tripsRouter(planner));

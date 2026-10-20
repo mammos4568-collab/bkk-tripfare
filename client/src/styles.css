@@ -144,9 +144,47 @@ h2 {
 }
 
 .wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font: 700 1.375rem/1.2 var(--font-display);
   letter-spacing: -0.01em;
   text-decoration: none;
+}
+
+/* สัญลักษณ์: หมุดแดงที่จุดต่อของเส้นสายรถ */
+.mark {
+  flex: none;
+  --mark-blue-c: #1f4fa3;
+  --mark-green-c: #2e8b3e;
+}
+
+.mark .mark-blue,
+.mark .mark-green {
+  fill: none;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mark .mark-blue {
+  stroke: var(--mark-blue-c);
+}
+
+.mark .mark-green {
+  stroke: var(--mark-green-c);
+}
+
+.mark .mark-stop {
+  fill: var(--platform);
+  stroke-width: 1.8;
+}
+
+@media (prefers-color-scheme: dark) {
+  .mark {
+    --mark-blue-c: #6f9ae6;
+    --mark-green-c: #5cc172;
+  }
 }
 
 .site-header nav {
@@ -471,6 +509,103 @@ select.field {
 
 .timebar.thin .walk {
   background-size: 6px 6px;
+}
+
+/* ---------- แผนที่ ---------- */
+
+.route-map {
+  height: 300px;
+  margin-top: 28px;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: var(--platform);
+  font: inherit;
+  z-index: 0; /* ไม่ให้ชั้นของแผนที่ลอยทับส่วนอื่นของหน้า */
+}
+
+@media (min-width: 960px) {
+  .route-map {
+    height: 380px;
+  }
+}
+
+/* รูปแผนที่เป็นสีเทา ให้สีของสายรถเป็นสีเดียวที่เด่น */
+.route-map .leaflet-tile-pane {
+  filter: grayscale(1) contrast(0.9) brightness(1.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  .route-map .leaflet-tile-pane {
+    filter: grayscale(1) invert(1) contrast(0.82) brightness(0.92);
+  }
+}
+
+.route-map .leaflet-bar {
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+.route-map .leaflet-bar a {
+  border-bottom-color: var(--rule);
+  background: var(--field);
+  color: var(--ink);
+}
+
+.route-map .leaflet-bar a:hover {
+  background: var(--platform);
+}
+
+.route-map .leaflet-control-attribution {
+  background: color-mix(in srgb, var(--platform) 85%, transparent);
+  color: var(--muted);
+  font-size: 0.6875rem;
+}
+
+.route-map .leaflet-control-attribution a {
+  color: inherit;
+}
+
+.route-map .leaflet-popup-content-wrapper,
+.route-map .leaflet-popup-tip {
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: var(--field);
+  color: var(--ink);
+  box-shadow: none;
+}
+
+.route-map .leaflet-popup-content {
+  margin: 10px 14px;
+  font: 400 0.9375rem/1.5 var(--font-body);
+}
+
+.map-pick {
+  display: grid;
+  justify-items: start;
+}
+
+.map-pick-name {
+  margin: 0 0 4px;
+  font-weight: 600;
+}
+
+.route-map .leaflet-tooltip {
+  padding: 2px 8px;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: var(--field);
+  color: var(--ink);
+  box-shadow: none;
+  font: 500 0.8125rem/1.4 var(--font-body);
+}
+
+.route-map .leaflet-tooltip::before {
+  display: none;
+}
+
+.route-map .map-label {
+  font-weight: 600;
 }
 
 .others {

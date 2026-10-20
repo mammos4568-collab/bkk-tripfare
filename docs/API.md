@@ -14,6 +14,7 @@
 | Endpoint | เจ้าของ | สถานะ |
 |---|---|---|
 | `GET /api/health` | คนหลัก | ✅ ใช้ได้ |
+| `GET /api/network` | คนหลัก | ✅ ใช้ได้ — แผนที่และช่องเลือกจุดใช้อันนี้ |
 | `GET /api/stops`, `GET /api/lines` | คนหลัก | ✅ ใช้ได้ |
 | `POST /api/trips/options` | คนหลัก | ✅ ใช้ได้ — หน้าแรกใช้อันนี้ |
 | `POST /api/trips/plan` | คนหลัก | ✅ ใช้ได้ |
@@ -51,12 +52,31 @@
 
 `data_checked_at` = วันที่ตรวจข้อมูลราคาที่เก่าที่สุดในระบบ, `sample_data` = ยังมีข้อมูลสมมติปนอยู่หรือไม่
 
+### `GET /api/network`
+
+ทุกจุด (พร้อมพิกัด) และทุกสาย (พร้อมสี) ในครั้งเดียว ไม่จำกัดจำนวน — ใช้วาดแผนที่และทำช่องเลือกจุด (cache 5 นาที)
+
+```json
+{
+  "stops": [
+    { "id": "SMP-A1", "name_th": "[ตัวอย่าง] ต้นสายแดง", "name_en": "[Sample] Red Terminus", "mode": "rail", "lat": 13.8, "lon": 100.55 }
+  ],
+  "lines": [
+    { "id": "SMP-RED", "name_th": "[ตัวอย่าง] สายสีแดงสมมติ", "mode": "rail", "operator": "SAMPLE_RAIL",
+      "color": "#C8102E", "stops": ["SMP-A1", "SMP-A2", "SMP-C0", "SMP-A3", "SMP-A4"] }
+  ]
+}
+```
+
+- `mode`: `rail` (รถไฟฟ้า) | `train` (รถไฟ) | `bus` (รถเมล์) | `boat` (เรือ)
+- `color`: สีประจำสาย (`null` = หน้าเว็บใช้สีตามประเภท)
+
 ### `GET /api/stops?q=&mode=`
 
-ค้นหาจุด (ใช้ทำช่องเลือกจุดในฟอร์ม) — ไม่ใส่ `q` = คืนทั้งหมด (สูงสุด 50 รายการ)
+ค้นหาจุดด้วยคำ (ไว้ทำช่องค้นหาแบบพิมพ์) — คืนสูงสุด 50 รายการ
 
 - `q` (ไม่บังคับ): คำค้นในชื่อไทย ชื่ออังกฤษ หรือ id
-- `mode` (ไม่บังคับ): `rail` | `bus` | `boat`
+- `mode` (ไม่บังคับ): `rail` | `train` | `bus` | `boat`
 
 ```json
 {
@@ -73,7 +93,7 @@
 {
   "lines": [
     { "id": "SMP-RED", "name_th": "[ตัวอย่าง] สายสีแดงสมมติ", "mode": "rail",
-      "operator": "SAMPLE_RAIL", "stops": ["SMP-A1", "SMP-A2", "SMP-C0", "SMP-A3", "SMP-A4"] }
+      "operator": "SAMPLE_RAIL", "color": "#C8102E", "stops": ["SMP-A1", "SMP-A2", "SMP-C0", "SMP-A3", "SMP-A4"] }
   ]
 }
 ```

@@ -7,7 +7,7 @@
  * ช่อง "website" คือ honeypot: ซ่อนจากคน แต่บอตจะกรอก → server ทิ้งรีพอร์ตนั้น
  */
 import { useEffect, useState } from 'react';
-import { getLines, getStops, submitReport } from '../api.js';
+import { getNetwork, submitReport } from '../api.js';
 import StopSelect from '../components/StopSelect.jsx';
 
 const TYPES = [
@@ -24,10 +24,10 @@ export default function Report() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    Promise.all([getLines(), getStops()])
-      .then(([l, s]) => {
-        setLines(l.lines);
-        setStops(s.stops);
+    getNetwork()
+      .then((data) => {
+        setLines(data.lines);
+        setStops(data.stops);
       })
       .catch((err) => setError(err.message));
   }, []);

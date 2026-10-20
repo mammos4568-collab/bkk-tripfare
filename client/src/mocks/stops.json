@@ -143,6 +143,39 @@
       "lines": [
         "SMP-BUS1"
       ]
+    },
+    {
+      "id": "SMP-R1",
+      "name_th": "[ตัวอย่าง] สถานีรถไฟชานเมือง",
+      "name_en": "[Sample] Suburban Station",
+      "mode": "train",
+      "lat": 13.814,
+      "lon": 100.612,
+      "lines": [
+        "SMP-TRAIN"
+      ]
+    },
+    {
+      "id": "SMP-R2",
+      "name_th": "[ตัวอย่าง] สถานีรถไฟกลางทาง",
+      "name_en": "[Sample] Midway Station",
+      "mode": "train",
+      "lat": 13.803,
+      "lon": 100.585,
+      "lines": [
+        "SMP-TRAIN"
+      ]
+    },
+    {
+      "id": "SMP-R3",
+      "name_th": "[ตัวอย่าง] สถานีรถไฟในเมือง",
+      "name_en": "[Sample] City Station",
+      "mode": "train",
+      "lat": 13.794,
+      "lon": 100.559,
+      "lines": [
+        "SMP-TRAIN"
+      ]
     }
   ]
 }

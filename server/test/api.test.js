@@ -53,10 +53,23 @@ test('GET /api/health', async () => {
   assert.equal(body.sample_data, false);
 });
 
-test('ส่ง header ความปลอดภัยพื้นฐาน (helmet)', async () => {
+test('ส่ง header ความปลอดภัยพื้นฐาน (helmet) และ CSP อนุญาตรูปแผนที่', async () => {
   const res = await get('/api/health');
   assert.equal(res.headers.get('x-content-type-options'), 'nosniff');
   assert.equal(res.headers.get('x-powered-by'), null);
+  const csp = res.headers.get('content-security-policy');
+  assert.match(csp, /img-src [^;]*https:\/\/tile\.openstreetmap\.org/);
+  assert.match(csp, /script-src 'self'/);
+});
+
+test('GET /api/network คืนทุกจุดพร้อมพิกัด และทุกสายพร้อมสี', async () => {
+  const res = await get('/api/network');
+  assert.equal(res.status, 200);
+  const { stops, lines } = await res.json();
+  assert.equal(stops.length, 9);
+  assert.ok(stops.every((s) => typeof s.lat === 'number' && typeof s.lon === 'number'));
+  assert.deepEqual(lines.map((l) => l.id), ['L1', 'L2', 'BUS']);
+  assert.ok(lines.every((l) => 'color' in l && Array.isArray(l.stops)));
 });
 
 test('GET /api/stops ค้นหาและกรองได้', async () => {

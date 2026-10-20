@@ -2,9 +2,11 @@
  * ข้อความและรูปแบบตัวเลขที่ใช้ทั้งเว็บ — แก้คำที่นี่ที่เดียว ทุกหน้าจะตรงกัน
  */
 
+/** ประเภทรถ เรียงตามที่แสดงในช่องเลือกจุด */
+export const MODE_ORDER = ['rail', 'train', 'bus', 'boat'];
+export const MODE_LABEL = { rail: 'รถไฟฟ้า', train: 'รถไฟ', bus: 'รถเมล์', boat: 'เรือ' };
 /** หน่วยนับจุดจอดของแต่ละประเภท */
-export const STOP_UNIT = { rail: 'สถานี', bus: 'ป้าย', boat: 'ท่า' };
-export const MODE_LABEL = { rail: 'รถไฟฟ้า', bus: 'รถเมล์', boat: 'เรือ' };
+export const STOP_UNIT = { rail: 'สถานี', train: 'สถานี', bus: 'ป้าย', boat: 'ท่า' };
 
 const ROUTE_NAME = {
   cheapest: 'ประหยัดที่สุด',

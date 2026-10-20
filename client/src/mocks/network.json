@@ -1,0 +1,196 @@
+{
+  "stops": [
+    {
+      "id": "SMP-A1",
+      "name_th": "[ตัวอย่าง] ต้นสายแดง",
+      "name_en": "[Sample] Red Terminus",
+      "mode": "rail",
+      "lat": 13.8,
+      "lon": 100.55
+    },
+    {
+      "id": "SMP-A2",
+      "name_th": "[ตัวอย่าง] ตลาดเช้า",
+      "name_en": "[Sample] Morning Market",
+      "mode": "rail",
+      "lat": 13.792,
+      "lon": 100.556
+    },
+    {
+      "id": "SMP-C0",
+      "name_th": "[ตัวอย่าง] ชุมทางกลาง",
+      "name_en": "[Sample] Central Junction",
+      "mode": "rail",
+      "lat": 13.784,
+      "lon": 100.562
+    },
+    {
+      "id": "SMP-A3",
+      "name_th": "[ตัวอย่าง] สวนสาธารณะ",
+      "name_en": "[Sample] City Park",
+      "mode": "rail",
+      "lat": 13.776,
+      "lon": 100.568
+    },
+    {
+      "id": "SMP-A4",
+      "name_th": "[ตัวอย่าง] ปลายสายแดง",
+      "name_en": "[Sample] Red End",
+      "mode": "rail",
+      "lat": 13.768,
+      "lon": 100.574
+    },
+    {
+      "id": "SMP-B1",
+      "name_th": "[ตัวอย่าง] ต้นสายฟ้า",
+      "name_en": "[Sample] Sky Terminus",
+      "mode": "rail",
+      "lat": 13.79,
+      "lon": 100.575
+    },
+    {
+      "id": "SMP-B2",
+      "name_th": "[ตัวอย่าง] ริมน้ำ",
+      "name_en": "[Sample] Riverside",
+      "mode": "rail",
+      "lat": 13.778,
+      "lon": 100.55
+    },
+    {
+      "id": "SMP-P1",
+      "name_th": "[ตัวอย่าง] ท่าเรือริมน้ำ",
+      "name_en": "[Sample] Riverside Pier",
+      "mode": "boat",
+      "lat": 13.777,
+      "lon": 100.547
+    },
+    {
+      "id": "SMP-P2",
+      "name_th": "[ตัวอย่าง] ท่าเรือวัด",
+      "name_en": "[Sample] Temple Pier",
+      "mode": "boat",
+      "lat": 13.765,
+      "lon": 100.54
+    },
+    {
+      "id": "SMP-P3",
+      "name_th": "[ตัวอย่าง] ท่าเรือปลายน้ำ",
+      "name_en": "[Sample] Downstream Pier",
+      "mode": "boat",
+      "lat": 13.752,
+      "lon": 100.535
+    },
+    {
+      "id": "SMP-U1",
+      "name_th": "[ตัวอย่าง] ป้ายรถเมล์หน้าต้นสายแดง",
+      "name_en": "[Sample] Bus Stop at Red Terminus",
+      "mode": "bus",
+      "lat": 13.801,
+      "lon": 100.548
+    },
+    {
+      "id": "SMP-U2",
+      "name_th": "[ตัวอย่าง] ป้ายรถเมล์หน้าโรงเรียน",
+      "name_en": "[Sample] School Bus Stop",
+      "mode": "bus",
+      "lat": 13.776,
+      "lon": 100.541
+    },
+    {
+      "id": "SMP-U3",
+      "name_th": "[ตัวอย่าง] ป้ายรถเมล์หน้าท่าเรือปลายน้ำ",
+      "name_en": "[Sample] Bus Stop at Downstream Pier",
+      "mode": "bus",
+      "lat": 13.753,
+      "lon": 100.537
+    },
+    {
+      "id": "SMP-R1",
+      "name_th": "[ตัวอย่าง] สถานีรถไฟชานเมือง",
+      "name_en": "[Sample] Suburban Station",
+      "mode": "train",
+      "lat": 13.814,
+      "lon": 100.612
+    },
+    {
+      "id": "SMP-R2",
+      "name_th": "[ตัวอย่าง] สถานีรถไฟกลางทาง",
+      "name_en": "[Sample] Midway Station",
+      "mode": "train",
+      "lat": 13.803,
+      "lon": 100.585
+    },
+    {
+      "id": "SMP-R3",
+      "name_th": "[ตัวอย่าง] สถานีรถไฟในเมือง",
+      "name_en": "[Sample] City Station",
+      "mode": "train",
+      "lat": 13.794,
+      "lon": 100.559
+    }
+  ],
+  "lines": [
+    {
+      "id": "SMP-RED",
+      "name_th": "[ตัวอย่าง] สายสีแดงสมมติ",
+      "mode": "rail",
+      "operator": "SAMPLE_RAIL",
+      "color": "#C8102E",
+      "stops": [
+        "SMP-A1",
+        "SMP-A2",
+        "SMP-C0",
+        "SMP-A3",
+        "SMP-A4"
+      ]
+    },
+    {
+      "id": "SMP-SKY",
+      "name_th": "[ตัวอย่าง] สายสีฟ้าสมมติ",
+      "mode": "rail",
+      "operator": "SAMPLE_RAIL",
+      "color": "#2AA4D6",
+      "stops": [
+        "SMP-B1",
+        "SMP-C0",
+        "SMP-B2"
+      ]
+    },
+    {
+      "id": "SMP-BOAT",
+      "name_th": "[ตัวอย่าง] เรือด่วนสมมติ",
+      "mode": "boat",
+      "operator": "SAMPLE_BOAT",
+      "color": "#E07A12",
+      "stops": [
+        "SMP-P1",
+        "SMP-P2",
+        "SMP-P3"
+      ]
+    },
+    {
+      "id": "SMP-TRAIN",
+      "name_th": "[ตัวอย่าง] รถไฟสายตะวันออกสมมติ",
+      "mode": "train",
+      "operator": "SAMPLE_TRAIN",
+      "color": null,
+      "stops": [
+        "SMP-R1",
+        "SMP-R2",
+        "SMP-R3"
+      ]
+    },
+    {
+      "id": "SMP-BUS1",
+      "name_th": "[ตัวอย่าง] รถเมล์สาย 1 สมมติ",
+      "mode": "bus",
+      "operator": "SAMPLE_BUS",
+      "color": null,
+      "stops": [
+        "SMP-U1",
+        "SMP-U2",
+        "SMP-U3"
+      ]
+    }
+  ]
+}

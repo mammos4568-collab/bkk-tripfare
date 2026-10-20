@@ -18,6 +18,13 @@
       "checked_at": "2026-10-20"
     },
     {
+      "id": "smp_train",
+      "type": "flat",
+      "amount": 6,
+      "source": "SAMPLE: ข้อมูลสมมติ ห้ามใช้จริง",
+      "checked_at": "2026-10-20"
+    },
+    {
       "id": "smp_bus",
       "type": "flat",
       "amount": 8,

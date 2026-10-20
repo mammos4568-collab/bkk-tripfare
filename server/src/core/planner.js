@@ -251,7 +251,22 @@ export function createPlanner(data) {
   }
 
   function listLines() {
-    return data.lines.map(({ id, name_th, mode, operator, stops }) => ({ id, name_th, mode, operator, stops }));
+    return data.lines.map(({ id, name_th, mode, operator, color, stops }) => ({
+      id,
+      name_th,
+      mode,
+      operator,
+      color: color ?? null,
+      stops,
+    }));
+  }
+
+  /** ทุกจุดและทุกสายในครั้งเดียว — ใช้วาดแผนที่และทำช่องเลือกจุด */
+  function network() {
+    return {
+      stops: data.stops.map(({ id, name_th, name_en, mode, lat, lon }) => ({ id, name_th, name_en, mode, lat, lon })),
+      lines: listLines(),
+    };
   }
 
   function info() {
@@ -263,5 +278,5 @@ export function createPlanner(data) {
     };
   }
 
-  return { planSegment, planTrip, planOptions, searchStops, listLines, info, stopsById, linesById };
+  return { planSegment, planTrip, planOptions, searchStops, listLines, network, info, stopsById, linesById };
 }

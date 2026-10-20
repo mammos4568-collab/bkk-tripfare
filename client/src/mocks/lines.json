@@ -5,6 +5,7 @@
       "name_th": "[ตัวอย่าง] สายสีแดงสมมติ",
       "mode": "rail",
       "operator": "SAMPLE_RAIL",
+      "color": "#C8102E",
       "stops": [
         "SMP-A1",
         "SMP-A2",
@@ -18,6 +19,7 @@
       "name_th": "[ตัวอย่าง] สายสีฟ้าสมมติ",
       "mode": "rail",
       "operator": "SAMPLE_RAIL",
+      "color": "#2AA4D6",
       "stops": [
         "SMP-B1",
         "SMP-C0",
@@ -29,6 +31,7 @@
       "name_th": "[ตัวอย่าง] เรือด่วนสมมติ",
       "mode": "boat",
       "operator": "SAMPLE_BOAT",
+      "color": "#E07A12",
       "stops": [
         "SMP-P1",
         "SMP-P2",
@@ -36,10 +39,23 @@
       ]
     },
     {
+      "id": "SMP-TRAIN",
+      "name_th": "[ตัวอย่าง] รถไฟสายตะวันออกสมมติ",
+      "mode": "train",
+      "operator": "SAMPLE_TRAIN",
+      "color": null,
+      "stops": [
+        "SMP-R1",
+        "SMP-R2",
+        "SMP-R3"
+      ]
+    },
+    {
       "id": "SMP-BUS1",
       "name_th": "[ตัวอย่าง] รถเมล์สาย 1 สมมติ",
       "mode": "bus",
       "operator": "SAMPLE_BUS",
+      "color": null,
       "stops": [
         "SMP-U1",
         "SMP-U2",

@@ -8,7 +8,7 @@ import { parse } from '../validate.js';
 
 const stopsQuery = z.object({
   q: z.string().trim().max(50).optional(),
-  mode: z.enum(['rail', 'bus', 'boat']).optional(),
+  mode: z.enum(['rail', 'train', 'bus', 'boat']).optional(),
 });
 
 export function stopsRouter(planner) {
@@ -16,6 +16,17 @@ export function stopsRouter(planner) {
   router.get('/', (req, res) => {
     const { q, mode } = parse(stopsQuery, req.query);
     res.json({ stops: planner.searchStops({ q, mode, limit: 50 }) });
+  });
+  return router;
+}
+
+/** GET /api/network — ทุกจุดและทุกสาย (แผนที่ + ช่องเลือกจุด) */
+export function networkRouter(planner) {
+  const router = Router();
+  const body = planner.network(); // ข้อมูลไม่เปลี่ยนระหว่างที่ server รัน → สร้างครั้งเดียว
+  router.get('/', (req, res) => {
+    res.set('Cache-Control', 'public, max-age=300');
+    res.json(body);
   });
   return router;
 }

@@ -6,7 +6,7 @@
  * ห้ามแสดงจุดเริ่มต้นของคนอื่น ถ้าต่อยอดเป็นกลุ่มหลายคนจริง (ใช้ origin_index)
  */
 import { useEffect, useState } from 'react';
-import { findMeetup, getStops } from '../api.js';
+import { findMeetup, getNetwork } from '../api.js';
 import StopSelect from '../components/StopSelect.jsx';
 import { num } from '../labels.js';
 
@@ -21,7 +21,7 @@ export default function Meetup() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    getStops()
+    getNetwork()
       .then((data) => setStops(data.stops))
       .catch((err) => setError(err.message));
   }, []);

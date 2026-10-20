@@ -13,6 +13,7 @@
  */
 import { useState } from 'react';
 import { login } from '../api.js';
+import Mark from '../components/Mark.jsx';
 
 export default function AdminApp() {
   const [email, setEmail] = useState('');
@@ -34,6 +35,7 @@ export default function AdminApp() {
     <div className="admin wrap">
       <header className="site-header">
         <a className="wordmark" href="/">
+          <Mark />
           BKK TripFare
         </a>
         <span className="muted">ผู้ดูแลระบบ</span>

@@ -5,5 +5,5 @@
  */
 export const PRESETS = [
   ['SMP-A1', 'SMP-P2', 'SMP-A4'],
-  ['SMP-U2', 'SMP-C0'],
+  ['SMP-R1', 'SMP-C0', 'SMP-P2'],
 ];

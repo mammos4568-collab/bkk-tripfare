@@ -6,6 +6,7 @@
  */
 import mockLines from './mocks/lines.json';
 import mockMeetup from './mocks/meetup.json';
+import mockNetwork from './mocks/network.json';
 import mockOptions from './mocks/options.json';
 import mockPlan from './mocks/plan.json';
 import mockStops from './mocks/stops.json';
@@ -58,6 +59,13 @@ export function getHealth() {
   return request('/health');
 }
 
+/** ทุกจุด (พร้อมพิกัด) และทุกสาย (พร้อมสี) — ใช้กับแผนที่และช่องเลือกจุด */
+export function getNetwork() {
+  if (USE_MOCK) return mock(mockNetwork);
+  return request('/network');
+}
+
+/** ค้นหาจุดด้วยคำ (คืนสูงสุด 50 จุด) — ไว้ทำช่องค้นหาแบบพิมพ์ */
 export function getStops(q = '') {
   if (USE_MOCK) {
     const needle = q.trim().toLowerCase();

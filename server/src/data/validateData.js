@@ -6,7 +6,7 @@
  * ด่านนี้ช่วยจับข้อมูลที่พิมพ์ผิดหรือ AI แต่งมา ก่อนจะไปถึงผู้ใช้
  */
 
-const MODES = ['rail', 'bus', 'boat'];
+const MODES = ['rail', 'train', 'bus', 'boat'];
 const RULE_TYPES = ['flat', 'by_stops', 'table'];
 const ID_PATTERN = /^[A-Za-z0-9_-]+$/; // ห้ามมี : หรือ | เพราะโค้ดใช้เป็นตัวคั่น
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;

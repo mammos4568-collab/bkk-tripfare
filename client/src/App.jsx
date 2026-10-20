@@ -1,5 +1,6 @@
 import AdminApp from './admin/AdminApp.jsx';
 import { USE_MOCK } from './api.js';
+import Mark from './components/Mark.jsx';
 import { isOn } from './features.js';
 import Meetup from './pages/Meetup.jsx';
 import PlanTrip from './pages/PlanTrip.jsx';
@@ -18,6 +19,7 @@ export default function App() {
 
       <header className="site-header wrap">
         <a className="wordmark" href="/">
+          <Mark />
           BKK TripFare
         </a>
         <nav aria-label="เมนูหลัก">

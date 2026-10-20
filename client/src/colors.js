@@ -1,10 +1,10 @@
 /**
  * สีของสายรถ: ใช้สีประจำสายจาก data/lines.json ("color") ถ้าไม่มีใช้สีตามประเภท
- * ค่าเดียวกับ --rail / --bus / --boat ใน styles.css
  */
-const MODE_COLOR = { rail: '#2e7d4f', bus: '#2f5d9e', boat: '#c46a0a' };
+export const MODE_COLOR = { rail: '#2e7d4f', train: '#8a4b2d', bus: '#2f5d9e', boat: '#c46a0a' };
 const INK = '#1c2433';
 
+export const lineColor = (line) => line.color ?? MODE_COLOR[line.mode] ?? INK;
 export const legColor = (leg) => leg.line_color ?? MODE_COLOR[leg.mode] ?? INK;
 
 function luminance(hex) {

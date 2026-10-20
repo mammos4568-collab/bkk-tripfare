@@ -11,5 +11,8 @@
   { "id": "SMP-P3", "name_th": "[ตัวอย่าง] ท่าเรือปลายน้ำ", "name_en": "[Sample] Downstream Pier", "mode": "boat", "lat": 13.752, "lon": 100.535 },
   { "id": "SMP-U1", "name_th": "[ตัวอย่าง] ป้ายรถเมล์หน้าต้นสายแดง", "name_en": "[Sample] Bus Stop at Red Terminus", "mode": "bus", "lat": 13.801, "lon": 100.548 },
   { "id": "SMP-U2", "name_th": "[ตัวอย่าง] ป้ายรถเมล์หน้าโรงเรียน", "name_en": "[Sample] School Bus Stop", "mode": "bus", "lat": 13.776, "lon": 100.541 },
-  { "id": "SMP-U3", "name_th": "[ตัวอย่าง] ป้ายรถเมล์หน้าท่าเรือปลายน้ำ", "name_en": "[Sample] Bus Stop at Downstream Pier", "mode": "bus", "lat": 13.753, "lon": 100.537 }
+  { "id": "SMP-U3", "name_th": "[ตัวอย่าง] ป้ายรถเมล์หน้าท่าเรือปลายน้ำ", "name_en": "[Sample] Bus Stop at Downstream Pier", "mode": "bus", "lat": 13.753, "lon": 100.537 },
+  { "id": "SMP-R1", "name_th": "[ตัวอย่าง] สถานีรถไฟชานเมือง", "name_en": "[Sample] Suburban Station", "mode": "train", "lat": 13.814, "lon": 100.612 },
+  { "id": "SMP-R2", "name_th": "[ตัวอย่าง] สถานีรถไฟกลางทาง", "name_en": "[Sample] Midway Station", "mode": "train", "lat": 13.803, "lon": 100.585 },
+  { "id": "SMP-R3", "name_th": "[ตัวอย่าง] สถานีรถไฟในเมือง", "name_en": "[Sample] City Station", "mode": "train", "lat": 13.794, "lon": 100.559 }
 ]

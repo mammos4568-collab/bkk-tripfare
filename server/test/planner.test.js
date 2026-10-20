@@ -117,6 +117,18 @@ test('planOptions หลายจุด: ทางเลือกถูกสุ
   assert.equal(cheapest.total.fare, 5 + 14); // ช่วงแรกนั่งรถเมล์ ช่วงสองรถไฟฟ้า
 });
 
+test('network: ทุกจุด (ไม่จำกัด 50) และสายพร้อมสี', () => {
+  const data = makeFixture();
+  data.lines[0].color = '#123456';
+  for (let i = 0; i < 60; i += 1) {
+    data.stops.push({ id: `EXTRA${i}`, name_th: `จุดเพิ่ม ${i}`, mode: 'bus', lat: 13.7, lon: 100.5 });
+  }
+  const { stops, lines } = createPlanner(data).network();
+  assert.equal(stops.length, 69);
+  assert.equal(lines[0].color, '#123456');
+  assert.equal(lines[1].color, null);
+});
+
 test('ค้นหาจุดด้วยชื่อหรือ id และกรองตามประเภท', () => {
   assert.deepEqual(planner.searchStops({ q: 'x3' }).map((s) => s.id), ['X3']);
   assert.deepEqual(planner.searchStops({ q: 'X3' })[0].lines.sort(), ['L1', 'L2']);

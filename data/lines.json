@@ -36,6 +36,17 @@
     "fare_rule": "smp_boat"
   },
   {
+    "id": "SMP-TRAIN",
+    "name_th": "[ตัวอย่าง] รถไฟสายตะวันออกสมมติ",
+    "mode": "train",
+    "operator": "SAMPLE_TRAIN",
+    "stops": ["SMP-R1", "SMP-R2", "SMP-R3"],
+    "bidirectional": true,
+    "minutes_between_stops": 7,
+    "headway_minutes": 40,
+    "fare_rule": "smp_train"
+  },
+  {
     "id": "SMP-BUS1",
     "name_th": "[ตัวอย่าง] รถเมล์สาย 1 สมมติ",
     "mode": "bus",
