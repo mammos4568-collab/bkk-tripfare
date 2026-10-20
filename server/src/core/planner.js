@@ -25,9 +25,23 @@ const CRITERIA = {
   fewest_transfers: (a, b) => a.transfers - b.transfers || a.minutes - b.minutes,
 };
 
+/** วิ่งช่วงเดียวคลุมตั้งแต่ก่อนเวลานี้ถึงหลังเวลานี้ = วิ่งทั้งวัน ไม่ต้องบอกเวลาให้บริการ */
+const ALL_DAY = { from: '06:30', to: '20:00' };
+const DAY_TYPES = ['weekday', 'weekend'];
+
 const round2 = (n) => Math.round(n * 100) / 100;
 const sum = (items, key) => items.reduce((total, item) => total + (item[key] ?? 0), 0);
 const pickBest = (items, compare) => items.reduce((best, item) => (compare(item, best) < 0 ? item : best));
+
+const toMinutes = (clock) => {
+  const [h, m] = clock.split(':').map(Number);
+  return h * 60 + m;
+};
+const toClock = (minutes) => {
+  const m = ((Math.round(minutes) % 1440) + 1440) % 1440;
+  return `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+};
+const isAllDay = (periods) => periods.length === 1 && periods[0][0] <= ALL_DAY.from && periods[0][1] >= ALL_DAY.to;
 
 /** ลายเซ็นของเส้นทาง ใช้ตัดเส้นทางที่ซ้ำกัน */
 const segmentSignature = (segment) =>
@@ -63,17 +77,81 @@ export function createPlanner(data) {
 
   const stopName = (id) => stopsById.get(id)?.name_th ?? id;
 
+  // ตำแหน่งของแต่ละจุดในสาย — สายที่ผ่านจุดเดิมสองครั้ง (สายสีน้ำเงินที่ท่าพระ) มีได้หลายตำแหน่ง
+  const positionsByLine = new Map();
+  // เวลาสะสมจากจุดแรกของสายถึงแต่ละตำแหน่ง (ใช้เลื่อนเวลาให้บริการไปเป็นเวลาที่จุดขึ้นรถ)
+  const elapsedByLine = new Map();
+  for (const line of data.lines) {
+    const positions = new Map();
+    line.stops.forEach((id, i) => positions.set(id, [...(positions.get(id) ?? []), i]));
+    positionsByLine.set(line.id, positions);
+    const elapsed = [0];
+    for (let i = 0; i + 1 < line.stops.length; i += 1) {
+      elapsed.push(elapsed[i] + (line.segment_minutes?.[i] ?? line.minutes_between_stops));
+    }
+    elapsedByLine.set(line.id, elapsed);
+  }
+
+  /** ตำแหน่งของการนั่ง 1 จุด (from → to ที่อยู่ติดกันในสาย) เลือกคู่ที่ต่อจากตำแหน่งก่อนหน้าก่อน */
+  function stepPositions(lineId, from, to, last) {
+    const positions = positionsByLine.get(lineId);
+    let best = null;
+    for (const i of positions.get(from) ?? []) {
+      for (const j of positions.get(to) ?? []) {
+        if (Math.abs(i - j) !== 1) continue;
+        const score = last == null || i === last ? 0 : 1;
+        if (!best || score < best.score) best = { i, j, score };
+      }
+    }
+    return best;
+  }
+
+  /**
+   * เวลาให้บริการของสายนั้นในทิศที่นั่ง ณ จุดที่ขึ้น — คืน null ถ้าวิ่งทั้งวัน
+   * (data เก็บเวลาที่ออกจากจุดแรกของทิศนั้น → บวกเวลาเดินทางถึงจุดขึ้น แล้วปัดเป็นช่วง 5 นาที)
+   */
+  function legServiceHours(line, from, to) {
+    if (!line.service_hours) return null;
+    const direction = to > from ? 'forward' : 'backward';
+    const elapsed = elapsedByLine.get(line.id);
+    const offset = direction === 'forward' ? elapsed[from] : elapsed.at(-1) - elapsed[from];
+    const raw = Object.fromEntries(DAY_TYPES.map((day) => [day, line.service_hours[day]?.[direction] ?? []]));
+    if (DAY_TYPES.every((day) => isAllDay(raw[day]))) return null;
+    return Object.fromEntries(
+      DAY_TYPES.map((day) => [
+        day,
+        raw[day].map(([start, end]) => [
+          toClock(Math.floor((toMinutes(start) + offset) / 5) * 5),
+          toClock(Math.ceil((toMinutes(end) + offset) / 5) * 5),
+        ]),
+      ]),
+    );
+  }
+
   /** แปลง edge จาก Dijkstra เป็นขั้นตอนที่คนอ่านเข้าใจ (ride / walk) */
   function toLegs(edges) {
     const legs = [];
     let ride = null;
     for (const edge of edges) {
       if (edge.kind === 'board') {
-        ride = { lineId: edge.lineId, fromStop: edge.fromStop, toStop: edge.fromStop, numStops: 0, wait: edge.minutes, ride: 0 };
+        ride = {
+          lineId: edge.lineId,
+          fromStop: edge.fromStop,
+          toStop: edge.fromStop,
+          numStops: 0,
+          wait: edge.minutes,
+          ride: 0,
+          ranges: [],
+        };
       } else if (edge.kind === 'ride') {
         ride.numStops += 1;
         ride.ride += edge.minutes;
         ride.toStop = edge.toStop;
+        // ช่วงตำแหน่งในสายที่นั่งผ่าน (ปกติมีช่วงเดียว ถ้านั่งผ่านจุดที่สายวนกลับมาจะแยกเป็นสองช่วง)
+        const last = ride.ranges.at(-1);
+        const step = stepPositions(edge.lineId, edge.fromStop, edge.toStop, last?.[1]);
+        if (last && step.i === last[1]) last[1] = step.j;
+        else ride.ranges.push([step.i, step.j]);
       } else if (edge.kind === 'alight') {
         if (ride.numStops > 0) legs.push(rideLeg(ride));
         ride = null;
@@ -106,10 +184,18 @@ export function createPlanner(data) {
       to_stop: ride.toStop,
       to_name: stopName(ride.toStop),
       num_stops: ride.numStops,
+      ranges: ride.ranges,
       wait_minutes: waitMinutes,
       ride_minutes: rideMinutes,
       minutes: waitMinutes + rideMinutes,
+      ...(line.time_estimated ? { time_estimated: true } : {}),
+      ...withServiceHours(line, ride.ranges[0]),
     };
+  }
+
+  function withServiceHours(line, [from, to]) {
+    const hours = legServiceHours(line, from, to);
+    return hours ? { service_hours: hours } : {};
   }
 
   function checkOptimize(optimize) {
@@ -251,9 +337,10 @@ export function createPlanner(data) {
   }
 
   function listLines() {
-    return data.lines.map(({ id, name_th, mode, operator, color, stops }) => ({
+    return data.lines.map(({ id, name_th, group, mode, operator, color, stops }) => ({
       id,
       name_th,
+      group: group ?? name_th,
       mode,
       operator,
       color: color ?? null,
@@ -261,11 +348,15 @@ export function createPlanner(data) {
     }));
   }
 
-  /** ทุกจุดและทุกสายในครั้งเดียว — ใช้วาดแผนที่และทำช่องเลือกจุด */
+  /**
+   * ทุกจุด ทุกสาย และแนวเส้นทางจริง (ถ้ามี shapes.json) ในครั้งเดียว — ใช้วาดแผนที่และทำช่องเลือกจุด
+   * shapes[สาย] = { points: [[lat, lon], ...], stop_index: ลำดับใน points ของแต่ละจุดจอด }
+   */
   function network() {
     return {
       stops: data.stops.map(({ id, name_th, name_en, mode, lat, lon }) => ({ id, name_th, name_en, mode, lat, lon })),
       lines: listLines(),
+      shapes: data.shapes ?? {},
     };
   }
 

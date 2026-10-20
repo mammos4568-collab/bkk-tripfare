@@ -57,3 +57,28 @@ export function compareText(current, other) {
   if (gains.length === 0) return costs.join(' และ');
   return `${gains.join(' และ')} แต่${costs.join(' และ')}`;
 }
+
+const VEHICLE = { rail: 'รถไฟฟ้า', train: 'รถไฟ', bus: 'รถเมล์', boat: 'เรือ' };
+const span = (periods) => periods.map(([a, b]) => (a === b ? a : `${a}–${b}`)).join(' และ ');
+const sameHours = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
+/**
+ * เวลาที่มีรถ/เรือเที่ยวนั้นที่จุดขึ้น (leg.service_hours จาก API) เขียนเป็นประโยคเดียว
+ * เช่น "เรือเที่ยวนี้มีเฉพาะวันธรรมดา ช่วง 06:00–07:45"
+ */
+export function serviceText(hours, mode) {
+  const vehicle = VEHICLE[mode] ?? 'รถ';
+  const weekday = hours.weekday ?? [];
+  const weekend = hours.weekend ?? [];
+  const sparse = (periods) => periods.length > 3;
+  const describe = (periods) =>
+    sparse(periods) ? `เป็นรอบ ๆ ไม่ถี่ ระหว่าง ${periods[0][0]}–${periods.at(-1)[1]}` : `ช่วง ${span(periods)}`;
+  let text;
+  if (weekday.length === 0 && weekend.length === 0) text = `${vehicle}เที่ยวนี้ไม่มีให้บริการตามข้อมูลล่าสุด`;
+  else if (weekend.length === 0) text = `${vehicle}เที่ยวนี้มีเฉพาะวันธรรมดา ${describe(weekday)}`;
+  else if (weekday.length === 0) text = `${vehicle}เที่ยวนี้มีเฉพาะเสาร์–อาทิตย์ ${describe(weekend)}`;
+  else if (sameHours(weekday, weekend)) text = `${vehicle}เที่ยวนี้มี${describe(weekday)}`;
+  else text = `${vehicle}เที่ยวนี้ วันธรรมดามี${describe(weekday)} ส่วนเสาร์–อาทิตย์มี${describe(weekend)}`;
+  return sparse(weekday) || sparse(weekend) ? `${text} เช็กเวลากับผู้ให้บริการก่อนออกเดินทาง` : text;
+}
+

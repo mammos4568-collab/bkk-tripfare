@@ -12,7 +12,9 @@
     "test": "node --test",
     "validate-data": "node scripts/validate-data.js",
     "validate-data:strict": "node scripts/validate-data.js --strict",
-    "create-admin": "node scripts/create-admin.js"
+    "create-admin": "node scripts/create-admin.js",
+    "import-data": "node scripts/import-namtang.js",
+    "make-mocks": "node scripts/make-mocks.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",

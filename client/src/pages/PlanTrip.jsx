@@ -4,7 +4,7 @@
  * แนวทางการออกแบบ: docs/DESIGN.md
  *
  * TODO:
- *  - ช่องค้นหาจุดแบบพิมพ์แล้วขึ้นรายการ (ตอนข้อมูลจริงมีหลายร้อยจุด select จะยาวมาก)
+ *  - ช่องค้นหาจุดแบบพิมพ์แล้วขึ้นรายการ (ข้อมูลจริงมี 340 จุด select ยาวมาก)
  *  - ปุ่มสลับต้นทาง/ปลายทาง
  */
 import { useEffect, useRef, useState } from 'react';
@@ -125,6 +125,7 @@ export default function PlanTrip() {
                 <StopSelect
                   id={`point-${i}`}
                   stops={stops}
+                  lines={network?.lines}
                   value={value}
                   onChange={(v) => setPoint(i, v)}
                   placeholder={placeholder(i)}

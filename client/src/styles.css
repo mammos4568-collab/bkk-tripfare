@@ -529,14 +529,14 @@ select.field {
   }
 }
 
-/* รูปแผนที่เป็นสีเทา ให้สีของสายรถเป็นสีเดียวที่เด่น */
+/* รูปแผนที่สีจางลง (แม่น้ำยังฟ้า สวนยังเขียว) ให้สีของสายรถเด่นที่สุด */
 .route-map .leaflet-tile-pane {
-  filter: grayscale(1) contrast(0.9) brightness(1.04);
+  filter: saturate(0.4) contrast(0.92) brightness(1.03);
 }
 
 @media (prefers-color-scheme: dark) {
   .route-map .leaflet-tile-pane {
-    filter: grayscale(1) invert(1) contrast(0.82) brightness(0.92);
+    filter: invert(1) hue-rotate(180deg) saturate(0.45) contrast(0.85) brightness(0.9);
   }
 }
 
@@ -788,6 +788,13 @@ select.field {
 .leg-detail {
   color: var(--muted);
   font-size: 0.9375rem;
+}
+
+.leg-hours {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.875rem;
 }
 
 /* ราคาเป็นตั๋วกระดาษแบบตั๋วรถเมล์ (มีรอยบากสองข้าง) */

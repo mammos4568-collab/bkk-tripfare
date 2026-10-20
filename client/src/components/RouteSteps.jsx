@@ -1,5 +1,5 @@
 import { legColor, textOn } from '../colors.js';
-import { num, STOP_UNIT } from '../labels.js';
+import { num, serviceText, STOP_UNIT } from '../labels.js';
 
 /**
  * ขั้นตอนการเดินทางวาดเป็นเส้นสายรถแนวตั้ง
@@ -37,8 +37,10 @@ export default function RouteSteps({ option }) {
             <span className="leg-main">
               <span className="leg-title">{leg.line_name}</span>
               <span className="leg-detail">
-                {leg.num_stops} {STOP_UNIT[leg.mode]} นั่ง {leg.ride_minutes} นาที รอรถราว {leg.wait_minutes} นาที
+                {leg.num_stops} {STOP_UNIT[leg.mode]} นั่ง{leg.time_estimated ? 'ราว' : ''} {leg.ride_minutes} นาที รอรถราว{' '}
+                {leg.wait_minutes} นาที
               </span>
+              {leg.service_hours && <span className="leg-hours">{serviceText(leg.service_hours, leg.mode)}</span>}
             </span>
             {leg.fare_included_in_previous ? (
               <span className="stub-none">รวมในตั๋วก่อนหน้า</span>

@@ -2,149 +2,227 @@
   "optimize": "fastest",
   "segments": [
     {
-      "from": "SMP-A1",
-      "to": "SMP-P2",
-      "minutes": 34,
-      "fare": 41,
+      "from": "SRT-242",
+      "to": "BTS-12",
+      "minutes": 101,
+      "fare": 67,
       "transfers": 2,
       "legs": [
         {
           "type": "ride",
-          "line_id": "SMP-RED",
-          "line_name": "[ตัวอย่าง] สายสีแดงสมมติ",
-          "line_color": "#C8102E",
-          "mode": "rail",
-          "from_stop": "SMP-A1",
-          "from_name": "[ตัวอย่าง] ต้นสายแดง",
-          "to_stop": "SMP-C0",
-          "to_name": "[ตัวอย่าง] ชุมทางกลาง",
-          "num_stops": 2,
-          "wait_minutes": 3,
-          "ride_minutes": 5,
-          "minutes": 8,
-          "fare": 25,
+          "line_id": "SRT-EAST",
+          "line_name": "รถไฟสายตะวันออก (กรุงเทพ–หัวตะเข้)",
+          "line_color": "#8A4B2D",
+          "mode": "train",
+          "from_stop": "SRT-242",
+          "from_name": "พระจอมเกล้า",
+          "to_stop": "SRT-233",
+          "to_name": "ลาดกระบัง",
+          "num_stops": 1,
+          "ranges": [
+            [
+              12,
+              11
+            ]
+          ],
+          "wait_minutes": 46,
+          "ride_minutes": 6,
+          "minutes": 52,
+          "time_estimated": true,
+          "service_hours": {
+            "weekday": [
+              [
+                "07:00",
+                "07:40"
+              ],
+              [
+                "09:10",
+                "09:15"
+              ],
+              [
+                "11:05",
+                "11:10"
+              ],
+              [
+                "13:15",
+                "14:40"
+              ],
+              [
+                "16:10",
+                "17:05"
+              ],
+              [
+                "18:40",
+                "18:45"
+              ]
+            ],
+            "weekend": [
+              [
+                "06:00",
+                "09:15"
+              ],
+              [
+                "11:05",
+                "11:10"
+              ],
+              [
+                "13:15",
+                "14:40"
+              ],
+              [
+                "16:10",
+                "16:55"
+              ],
+              [
+                "18:40",
+                "18:45"
+              ]
+            ]
+          },
+          "fare": 2,
           "fare_included_in_previous": false
         },
         {
+          "type": "walk",
+          "from_stop": "SRT-233",
+          "from_name": "ลาดกระบัง",
+          "to_stop": "ARL-322",
+          "to_name": "ลาดกระบัง",
+          "minutes": 3
+        },
+        {
           "type": "ride",
-          "line_id": "SMP-SKY",
-          "line_name": "[ตัวอย่าง] สายสีฟ้าสมมติ",
-          "line_color": "#2AA4D6",
+          "line_id": "ARL",
+          "line_name": "แอร์พอร์ต เรล ลิงก์",
+          "line_color": "#E32020",
           "mode": "rail",
-          "from_stop": "SMP-C0",
-          "from_name": "[ตัวอย่าง] ชุมทางกลาง",
-          "to_stop": "SMP-B2",
-          "to_name": "[ตัวอย่าง] ริมน้ำ",
-          "num_stops": 1,
-          "wait_minutes": 4,
-          "ride_minutes": 3,
-          "minutes": 7,
-          "fare": 0,
-          "fare_included_in_previous": true
+          "from_stop": "ARL-322",
+          "from_name": "ลาดกระบัง",
+          "to_stop": "ARL-321",
+          "to_name": "พญาไท",
+          "num_stops": 6,
+          "ranges": [
+            [
+              6,
+              0
+            ]
+          ],
+          "wait_minutes": 6,
+          "ride_minutes": 29,
+          "minutes": 35,
+          "fare": 40,
+          "fare_included_in_previous": false
         },
         {
           "type": "walk",
-          "from_stop": "SMP-B2",
-          "from_name": "[ตัวอย่าง] ริมน้ำ",
-          "to_stop": "SMP-P1",
-          "to_name": "[ตัวอย่าง] ท่าเรือริมน้ำ",
-          "minutes": 5
+          "from_stop": "ARL-321",
+          "from_name": "พญาไท",
+          "to_stop": "BTS-32",
+          "to_name": "พญาไท",
+          "minutes": 4
         },
         {
           "type": "ride",
-          "line_id": "SMP-BOAT",
-          "line_name": "[ตัวอย่าง] เรือด่วนสมมติ",
-          "line_color": "#E07A12",
-          "mode": "boat",
-          "from_stop": "SMP-P1",
-          "from_name": "[ตัวอย่าง] ท่าเรือริมน้ำ",
-          "to_stop": "SMP-P2",
-          "to_name": "[ตัวอย่าง] ท่าเรือวัด",
-          "num_stops": 1,
-          "wait_minutes": 8,
-          "ride_minutes": 6,
-          "minutes": 14,
-          "fare": 16,
+          "line_id": "BTS-SUK",
+          "line_name": "BTS สายสุขุมวิท",
+          "line_color": "#65B724",
+          "mode": "rail",
+          "from_stop": "BTS-32",
+          "from_name": "พญาไท",
+          "to_stop": "BTS-12",
+          "to_name": "สยาม",
+          "num_stops": 2,
+          "ranges": [
+            [
+              21,
+              23
+            ]
+          ],
+          "wait_minutes": 2,
+          "ride_minutes": 5,
+          "minutes": 7,
+          "fare": 25,
           "fare_included_in_previous": false
         }
       ]
     },
     {
-      "from": "SMP-P2",
-      "to": "SMP-A4",
-      "minutes": 34,
-      "fare": 41,
-      "transfers": 2,
+      "from": "BTS-12",
+      "to": "PIER-13951",
+      "minutes": 39,
+      "fare": 59,
+      "transfers": 1,
       "legs": [
         {
           "type": "ride",
-          "line_id": "SMP-BOAT",
-          "line_name": "[ตัวอย่าง] เรือด่วนสมมติ",
-          "line_color": "#E07A12",
-          "mode": "boat",
-          "from_stop": "SMP-P2",
-          "from_name": "[ตัวอย่าง] ท่าเรือวัด",
-          "to_stop": "SMP-P1",
-          "to_name": "[ตัวอย่าง] ท่าเรือริมน้ำ",
+          "line_id": "BTS-SIL",
+          "line_name": "BTS สายสีลม",
+          "line_color": "#246B5B",
+          "mode": "rail",
+          "from_stop": "BTS-12",
+          "from_name": "สยาม",
+          "to_stop": "BTS-6",
+          "to_name": "กรุงธนบุรี",
+          "num_stops": 7,
+          "ranges": [
+            [
+              1,
+              8
+            ]
+          ],
+          "wait_minutes": 3,
+          "ride_minutes": 18,
+          "minutes": 21,
+          "fare": 43,
+          "fare_included_in_previous": false
+        },
+        {
+          "type": "walk",
+          "from_stop": "BTS-6",
+          "from_name": "กรุงธนบุรี",
+          "to_stop": "BTS-13834",
+          "to_name": "กรุงธนบุรี",
+          "minutes": 4
+        },
+        {
+          "type": "ride",
+          "line_id": "BTS-GLD",
+          "line_name": "รถไฟฟ้าสายสีทอง",
+          "line_color": "#A3862A",
+          "mode": "rail",
+          "from_stop": "BTS-13834",
+          "from_name": "กรุงธนบุรี",
+          "to_stop": "BTS-13835",
+          "to_name": "เจริญนคร",
           "num_stops": 1,
-          "wait_minutes": 8,
-          "ride_minutes": 6,
-          "minutes": 14,
+          "ranges": [
+            [
+              2,
+              1
+            ]
+          ],
+          "wait_minutes": 4,
+          "ride_minutes": 3,
+          "minutes": 7,
           "fare": 16,
           "fare_included_in_previous": false
         },
         {
           "type": "walk",
-          "from_stop": "SMP-P1",
-          "from_name": "[ตัวอย่าง] ท่าเรือริมน้ำ",
-          "to_stop": "SMP-B2",
-          "to_name": "[ตัวอย่าง] ริมน้ำ",
-          "minutes": 5
-        },
-        {
-          "type": "ride",
-          "line_id": "SMP-SKY",
-          "line_name": "[ตัวอย่าง] สายสีฟ้าสมมติ",
-          "line_color": "#2AA4D6",
-          "mode": "rail",
-          "from_stop": "SMP-B2",
-          "from_name": "[ตัวอย่าง] ริมน้ำ",
-          "to_stop": "SMP-C0",
-          "to_name": "[ตัวอย่าง] ชุมทางกลาง",
-          "num_stops": 1,
-          "wait_minutes": 4,
-          "ride_minutes": 3,
-          "minutes": 7,
-          "fare": 25,
-          "fare_included_in_previous": false
-        },
-        {
-          "type": "ride",
-          "line_id": "SMP-RED",
-          "line_name": "[ตัวอย่าง] สายสีแดงสมมติ",
-          "line_color": "#C8102E",
-          "mode": "rail",
-          "from_stop": "SMP-C0",
-          "from_name": "[ตัวอย่าง] ชุมทางกลาง",
-          "to_stop": "SMP-A4",
-          "to_name": "[ตัวอย่าง] ปลายสายแดง",
-          "num_stops": 2,
-          "wait_minutes": 3,
-          "ride_minutes": 5,
-          "minutes": 8,
-          "fare": 0,
-          "fare_included_in_previous": true
+          "from_stop": "BTS-13835",
+          "from_name": "เจริญนคร",
+          "to_stop": "PIER-13951",
+          "to_name": "ท่าเรือไอคอนสยาม",
+          "minutes": 7
         }
       ]
     }
   ],
   "total": {
-    "minutes": 68,
-    "fare": 82,
-    "transfers": 4
+    "minutes": 140,
+    "fare": 126,
+    "transfers": 3
   },
-  "warnings": [
-    "ราคาคำนวณจากข้อมูลตัวอย่าง ไม่ใช่ราคาจริง"
-  ],
-  "data_checked_at": "2026-10-20"
+  "warnings": [],
+  "data_checked_at": "2026-09-27"
 }

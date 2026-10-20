@@ -21,7 +21,7 @@ const isValidDate = (v) =>
   typeof v === 'string' && DATE_PATTERN.test(v) && !Number.isNaN(Date.parse(`${v}T00:00:00Z`)) &&
   new Date(`${v}T00:00:00Z`).toISOString().startsWith(v);
 
-export function validateData({ stops, lines, transfers, fares }) {
+export function validateData({ stops, lines, transfers, fares, shapes }) {
   const errors = [];
   const warnings = [];
   let sampleCount = 0;
@@ -164,10 +164,31 @@ export function validateData({ stops, lines, transfers, fares }) {
     } else if (line.minutes_between_stops > 30) {
       warnings.push(`${at}: minutes_between_stops = ${line.minutes_between_stops} นาที นานผิดปกติ`);
     }
+    if (line.segment_minutes !== undefined) {
+      if (!Array.isArray(line.segment_minutes) || line.segment_minutes.length !== (line.stops?.length ?? 0) - 1) {
+        errors.push(`${at}: segment_minutes ต้องมีจำนวน = จำนวนจุดจอด − 1`);
+      } else if (!line.segment_minutes.every((m) => isNumber(m) && m > 0)) {
+        errors.push(`${at}: segment_minutes ทุกค่าต้องเป็นตัวเลขมากกว่า 0`);
+      } else if (line.segment_minutes.some((m) => m > 60)) {
+        warnings.push(`${at}: segment_minutes บางช่วงนานเกิน 60 นาที`);
+      }
+    }
+    if (line.group !== undefined && !isText(line.group)) errors.push(`${at}: group ต้องเป็นข้อความ`);
     if (!isNumber(line.headway_minutes) || line.headway_minutes <= 0) {
       errors.push(`${at}: headway_minutes ต้องเป็นตัวเลขมากกว่า 0`);
-    } else if (line.headway_minutes > 120) {
+    } else if (line.headway_minutes > 120 && !line.service_hours) {
+      // สายที่วิ่งเฉพาะบางช่วง (มี service_hours) ค่าเฉลี่ยทั้งวันนานได้เป็นปกติ
       warnings.push(`${at}: headway_minutes = ${line.headway_minutes} นาที นานผิดปกติ`);
+    }
+    if (line.service_hours !== undefined) {
+      const clock = /^\d{2}:\d{2}$/;
+      const ok = ['weekday', 'weekend'].every((day) =>
+        ['forward', 'backward'].every((dir) => {
+          const periods = line.service_hours?.[day]?.[dir];
+          return Array.isArray(periods) && periods.every((p) => Array.isArray(p) && p.length === 2 && p.every((t) => clock.test(t)) && p[0] <= p[1]);
+        }),
+      );
+      if (!ok) errors.push(`${at}: service_hours ต้องเป็น { weekday|weekend: { forward|backward: [["HH:MM","HH:MM"], ...] } }`);
     }
 
     if (!ruleIds.has(line.fare_rule)) errors.push(`${at}: fare_rule "${line.fare_rule}" ไม่มีใน fares.json`);
@@ -186,6 +207,34 @@ export function validateData({ stops, lines, transfers, fares }) {
       warnings.push(`${at}: เดิน ${t.walk_minutes} นาที ไกลเกินไปสำหรับการต่อรถหรือเปล่า?`);
     }
   });
+
+  // ---------- shapes.json (ไม่บังคับ) ----------
+  if (shapes !== undefined) {
+    if (!shapes || typeof shapes !== 'object' || Array.isArray(shapes)) {
+      errors.push('shapes.json ต้องเป็น object { รหัสสาย: { points, stop_index } }');
+    } else {
+      const linesById = new Map(lines.map((l) => [l.id, l]));
+      for (const [id, shape] of Object.entries(shapes)) {
+        const at = `shapes.json (${id})`;
+        const line = linesById.get(id);
+        if (!line) {
+          warnings.push(`${at}: ไม่มีสายนี้ใน lines.json`);
+          continue;
+        }
+        const points = shape?.points;
+        if (!Array.isArray(points) || points.length < 2 || !points.every((p) => Array.isArray(p) && isNumber(p[0]) && isNumber(p[1]))) {
+          errors.push(`${at}: points ต้องเป็นรายการ [lat, lon] อย่างน้อย 2 จุด`);
+          continue;
+        }
+        const index = shape.stop_index;
+        if (!Array.isArray(index) || index.length !== line.stops.length) {
+          errors.push(`${at}: stop_index ต้องมีจำนวนเท่ากับจุดจอดของสาย`);
+        } else if (!index.every((v, k) => Number.isInteger(v) && v >= 0 && v < points.length && (k === 0 || v >= index[k - 1]))) {
+          errors.push(`${at}: stop_index ต้องเป็นเลขลำดับจุดที่เรียงจากน้อยไปมาก`);
+        }
+      }
+    }
+  }
 
   // ---------- ภาพรวม ----------
   for (const id of stopIds) {

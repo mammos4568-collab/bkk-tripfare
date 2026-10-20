@@ -9,7 +9,8 @@ import { approximateFare } from './fare.js';
  *
  * edge มี 4 แบบ (kind):
  *   board  S → L   ขึ้นรถ   เวลา = รอรถเฉลี่ย (headway / 2), ราคาโดยประมาณ = ค่าแรกเข้า
- *   ride   L → L   นั่งไป 1 จุด   เวลา = minutes_between_stops, ราคาโดยประมาณ = ราคาต่อจุด
+ *   ride   L → L   นั่งไป 1 จุด   เวลา = segment_minutes ของช่วงนั้น (ไม่มีก็ใช้ minutes_between_stops)
+ *                  ราคาโดยประมาณ = ราคาต่อจุด
  *   alight L → S   ลงรถ    เวลา 0
  *   walk   S → S   เดินต่อรถ (transfers.json) ได้ทั้งสองทิศ
  *
@@ -53,21 +54,22 @@ export function buildGraph({ lines, transfers }, rulesById) {
       });
     }
 
-    const directions = [line.stops];
-    if (line.bidirectional !== false) directions.push([...line.stops].reverse());
-    for (const sequence of directions) {
-      for (let i = 0; i + 1 < sequence.length; i += 1) {
-        addEdge({
-          from: lineNode(line.id, sequence[i]),
-          to: lineNode(line.id, sequence[i + 1]),
-          kind: 'ride',
-          lineId: line.id,
-          fromStop: sequence[i],
-          toStop: sequence[i + 1],
-          minutes: line.minutes_between_stops,
-          approxFare: approx.perStop,
-        });
-      }
+    // ช่วงที่ i = จาก stops[i] ไป stops[i + 1] ใช้เวลาเท่ากันทั้งไปและกลับ
+    const segmentMinutes = (i) => line.segment_minutes?.[i] ?? line.minutes_between_stops;
+    const ride = (i, j) =>
+      addEdge({
+        from: lineNode(line.id, line.stops[i]),
+        to: lineNode(line.id, line.stops[j]),
+        kind: 'ride',
+        lineId: line.id,
+        fromStop: line.stops[i],
+        toStop: line.stops[j],
+        minutes: segmentMinutes(Math.min(i, j)),
+        approxFare: approx.perStop,
+      });
+    for (let i = 0; i + 1 < line.stops.length; i += 1) {
+      ride(i, i + 1);
+      if (line.bidirectional !== false) ride(i + 1, i);
     }
   }
 

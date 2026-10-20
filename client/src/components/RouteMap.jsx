@@ -1,5 +1,6 @@
 /**
  * แผนที่เส้นทาง (Leaflet + รูปแผนที่ OpenStreetMap)
+ * - เส้นของแต่ละสายวาดตามแนวจริงจาก shapes ใน GET /api/network (ไม่มีก็ลากตรงระหว่างสถานี)
  * - ยังไม่ได้ค้นหา: แสดงทุกสายตามสีจริง กดจุดบนแผนที่เพื่อเลือกเป็นต้นทาง / จุดแวะ / ปลายทาง
  * - มีผลแล้ว: เน้นเส้นทางที่เลือก สายอื่นจางลง (ภาษาเดียวกับเส้นใน RouteSteps)
  *
@@ -57,10 +58,12 @@ export default function RouteMap({ network, option, onPick }) {
       return s ? [s.lat, s.lon] : null;
     };
     const focused = Boolean(option);
+    const shapes = network.shapes ?? {};
+    const linePath = (line) => shapes[line.id]?.points ?? line.stops.map(pos).filter(Boolean);
 
     // 1) ทุกสาย
     for (const line of network.lines) {
-      L.polyline(line.stops.map(pos).filter(Boolean), {
+      L.polyline(linePath(line), {
         color: lineColor(line),
         weight: focused ? 3 : 4,
         opacity: focused ? 0.22 : 0.85,
@@ -68,10 +71,12 @@ export default function RouteMap({ network, option, onPick }) {
       }).addTo(layer);
     }
 
-    // 2) ทุกจุด กดแล้วเลือกเป็นต้นทาง / จุดแวะ / ปลายทางได้
+    // 2) ทุกจุด กดแล้วเลือกเป็นต้นทาง / จุดแวะ / ปลายทางได้ (ซูมออกแล้วจุดเล็กลง ไม่ให้บังเส้น)
+    const dots = [];
+    const dotRadius = () => (focused ? 3 : map.getZoom() <= 11 ? 2.5 : map.getZoom() <= 12 ? 3.5 : 4.5);
     for (const stop of network.stops) {
-      L.circleMarker([stop.lat, stop.lon], {
-        radius: focused ? 3 : 4.5,
+      const dot = L.circleMarker([stop.lat, stop.lon], {
+        radius: dotRadius(),
         color: ink,
         weight: 1.5,
         opacity: focused ? 0.4 : 1,
@@ -88,12 +93,16 @@ export default function RouteMap({ network, option, onPick }) {
           { closeButton: false, offset: [0, -2] },
         )
         .addTo(layer);
+      dots.push(dot);
     }
+    const resize = () => dots.forEach((d) => d.setRadius(dotRadius()));
+    map.on('zoomend', resize);
 
     if (!focused) {
       const all = network.stops.map((s) => [s.lat, s.lon]);
       if (all.length > 0) map.fitBounds(all, { padding: [28, 28], animate: false });
-      return;
+      resize();
+      return () => map.off('zoomend', resize);
     }
 
     // 3) เส้นทางที่เลือก: นั่งรถ = เส้นหนาสีของสาย, เดิน = จุดไข่ปลา
@@ -102,7 +111,7 @@ export default function RouteMap({ network, option, onPick }) {
       for (const leg of segment.legs) {
         const latlngs =
           leg.type === 'ride'
-            ? rideCoords(linesById.get(leg.line_id), leg, pos)
+            ? rideCoords(linesById.get(leg.line_id), shapes[leg.line_id], leg, pos)
             : [pos(leg.from_stop), pos(leg.to_stop)].filter(Boolean);
         L.polyline(
           latlngs,
@@ -138,20 +147,29 @@ export default function RouteMap({ network, option, onPick }) {
     }
 
     if (bounds.length > 0) map.fitBounds(bounds, { padding: [36, 36], animate: !reduceMotion() });
+    return () => map.off('zoomend', resize);
   }, [network, option]);
 
   return <div ref={containerRef} className="route-map" role="region" aria-label="แผนที่เส้นทาง" />;
 }
 
-/** พิกัดตามลำดับสถานีบนสาย ระหว่างจุดขึ้นกับจุดลง (ทิศไหนก็ได้) */
-function rideCoords(line, leg, pos) {
+/**
+ * แนวเส้นของช่วงที่นั่ง: ตัดจากเส้นทางจริงของสายตาม leg.ranges (ลำดับจุดในสายที่นั่งผ่าน)
+ * ไม่มี shapes ก็ใช้พิกัดสถานีเรียงกัน
+ */
+function rideCoords(line, shape, leg, pos) {
   const direct = [pos(leg.from_stop), pos(leg.to_stop)].filter(Boolean);
   if (!line) return direct;
-  const a = line.stops.indexOf(leg.from_stop);
-  const b = line.stops.indexOf(leg.to_stop);
-  if (a === -1 || b === -1) return direct;
-  const ids = a <= b ? line.stops.slice(a, b + 1) : line.stops.slice(b, a + 1).reverse();
-  return ids.map(pos).filter(Boolean);
+  const ranges = leg.ranges ?? [[line.stops.indexOf(leg.from_stop), line.stops.indexOf(leg.to_stop)]];
+  if (ranges.some(([a, b]) => a < 0 || b < 0)) return direct;
+  const out = [];
+  for (const [a, b] of ranges) {
+    const piece = shape
+      ? shape.points.slice(Math.min(shape.stop_index[a], shape.stop_index[b]), Math.max(shape.stop_index[a], shape.stop_index[b]) + 1)
+      : line.stops.slice(Math.min(a, b), Math.max(a, b) + 1).map(pos).filter(Boolean);
+    out.push(...(a <= b ? piece : piece.reverse()));
+  }
+  return out.length >= 2 ? out : direct;
 }
 
 /** จุดบนเส้นทาง: start / via (จุดแวะ) / end / transfer (ที่ต่อรถ) */
