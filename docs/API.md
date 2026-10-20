@@ -1,38 +1,40 @@
 # สัญญา API (API Contract)
 
 > ไฟล์นี้คือข้อตกลงกลางของทีม client กับ server ต้องตรงกับที่เขียนไว้ตรงนี้
-> **ถ้าจะเปลี่ยน ต้องคุยในกลุ่มก่อน แล้วแก้ไฟล์นี้ใน PR เดียวกับโค้ด**
+> **ถ้าจะเปลี่ยน ต้องบอกอีกคนก่อน แล้วแก้ไฟล์นี้ใน PR เดียวกับโค้ด**
 > ใช้ AI ช่วยเขียนโค้ด → แนบไฟล์นี้ให้ AI ทุกครั้ง
 
-- Base URL: `/api` (ตอน dev client เรียกผ่าน proxy ของ Vite ไปที่ `http://localhost:3001`)
+- Base URL: `/api` (ตอน dev หน้าเว็บเรียกผ่าน proxy ของ Vite ไปที่ `http://localhost:3001`)
 - รับ/ส่งเป็น JSON (`Content-Type: application/json`) ขนาด body ไม่เกิน 10 KB
 - เวลาเป็น**นาที** (จำนวนเต็ม) ราคาเป็น**บาท**
-- id ของสถานี/ป้าย/ท่าเรือ และสายรถ เป็น string ตาม `data/` เช่น `"BTS-N8"`
+- id ของจุด (สถานี / ป้าย / ท่าเรือ) และสายรถ เป็น string ตาม `data/` เช่น `"SMP-A1"`
 
 ## สถานะ
 
 | Endpoint | เจ้าของ | สถานะ |
 |---|---|---|
-| `GET /api/health` | A | ✅ ใช้ได้ |
-| `GET /api/stops`, `GET /api/lines` | A | ✅ ใช้ได้ |
-| `POST /api/trips/plan` | A | ✅ ใช้ได้ (ข้อมูลยังเป็นข้อมูลสมมติ) |
-| `POST /api/meetup` | D | 🚧 ตอบ 501 / client ใช้ mock |
-| `/api/auth/*`, `/api/me*`, `/api/places*` | C | 🚧 ตอบ 501 |
-| `/api/reports*`, `/api/admin/*` | D | 🚧 ตอบ 501 |
+| `GET /api/health` | คนหลัก | ✅ ใช้ได้ |
+| `GET /api/network` | คนหลัก | ✅ ใช้ได้ — แผนที่และช่องเลือกจุดใช้อันนี้ |
+| `GET /api/stops`, `GET /api/lines` | คนหลัก | ✅ ใช้ได้ |
+| `POST /api/trips/options` | คนหลัก | ✅ ใช้ได้ — หน้าแรกใช้อันนี้ |
+| `POST /api/trips/plan` | คนหลัก | ✅ ใช้ได้ |
+| `POST /api/meetup` | คนหลัก | 🚧 ถ้ามีเวลา (ตอบ 501) |
+| `POST /api/auth/login`, `/logout`, `GET /api/me` | เพื่อน | 🚧 ต้องมี (ตอบ 501) |
+| `GET /api/admin/security-events` | เพื่อน | 🚧 ต้องมี (ตอบ 501) |
+| `POST /api/reports`, `/api/admin/reports*` | เพื่อน | 🚧 ถ้ามีเวลา (ตอบ 501) |
 
 ## รูปแบบ error (ทุก endpoint)
 
 ```json
-{ "error": { "code": "NO_ROUTE", "message": "ไม่พบเส้นทางระหว่างสองจุดนี้", "details": [] } }
+{ "error": { "code": "NO_ROUTE", "message": "ไม่พบเส้นทางจาก ... ไป ...", "details": [] } }
 ```
 
 | HTTP | code | เมื่อไหร่ |
 |---|---|---|
-| 400 | `INVALID_INPUT` | ข้อมูลที่ส่งมาไม่ถูกต้อง (`details` = รายการช่องที่ผิด) |
-| 401 | `UNAUTHORIZED` | ยังไม่ได้ล็อกอิน |
-| 403 | `FORBIDDEN` | ไม่มีสิทธิ์ (เช่น ไม่ใช่แอดมิน) |
+| 400 | `INVALID_INPUT` | ข้อมูลที่ส่งมาไม่ถูกต้อง (`details` = รายการช่องที่ผิด `{ path, message }`) |
+| 401 | `UNAUTHORIZED` | ยังไม่ได้ล็อกอิน / อีเมลหรือรหัสผ่านไม่ถูกต้อง |
+| 403 | `FORBIDDEN` | ไม่มีสิทธิ์ |
 | 404 | `NOT_FOUND`, `STOP_NOT_FOUND` | ไม่พบสิ่งที่ขอ |
-| 409 | `CONFLICT` | ซ้ำ เช่น อีเมลนี้สมัครแล้ว |
 | 422 | `NO_ROUTE` | หาเส้นทางไม่ได้ |
 | 429 | `RATE_LIMITED` | เรียกถี่เกินไป |
 | 501 | `NOT_IMPLEMENTED` | ส่วนนั้นยังไม่ได้ทำ |
@@ -40,7 +42,7 @@
 
 ---
 
-## ส่วน A — หาเส้นทางและราคา
+## หน้าเว็บผู้ใช้ (คนหลัก)
 
 ### `GET /api/health`
 
@@ -50,12 +52,36 @@
 
 `data_checked_at` = วันที่ตรวจข้อมูลราคาที่เก่าที่สุดในระบบ, `sample_data` = ยังมีข้อมูลสมมติปนอยู่หรือไม่
 
+### `GET /api/network`
+
+ทุกจุด (พร้อมพิกัด) ทุกสาย (พร้อมสี) และแนวเส้นทางจริงในครั้งเดียว ไม่จำกัดจำนวน — ใช้วาดแผนที่และทำช่องเลือกจุด (cache 5 นาที, ราว 100 KB)
+
+```json
+{
+  "stops": [
+    { "id": "BTS-12", "name_th": "สยาม", "name_en": "Siam", "mode": "rail", "lat": 13.745618, "lon": 100.534199 }
+  ],
+  "lines": [
+    { "id": "BTS-SUK", "name_th": "BTS สายสุขุมวิท", "group": "BTS สายสุขุมวิท", "mode": "rail",
+      "operator": "บริษัท ระบบขนส่งมวลชนกรุงเทพ จำกัด", "color": "#65B724", "stops": ["BTS-13843", "..."] }
+  ],
+  "shapes": {
+    "BTS-SUK": { "points": [[13.932336, 100.646563], "..."], "stop_index": [0, 4, 9, "..."] }
+  }
+}
+```
+
+- `mode`: `rail` (รถไฟฟ้า) | `train` (รถไฟ) | `bus` (รถเมล์) | `boat` (เรือ)
+- `color`: สีประจำสาย (`null` = หน้าเว็บใช้สีตามประเภท)
+- `group`: ชื่อกลุ่มในช่องเลือกจุด
+- `shapes[สาย].stop_index[i]` = ลำดับใน `points` ของจุดที่ i ของสาย (ไว้ตัดเส้นเฉพาะช่วงที่นั่ง) ไม่มี `shapes` ของสายไหน ให้ลากเส้นตรงระหว่างสถานี
+
 ### `GET /api/stops?q=&mode=`
 
-ค้นหาสถานี/ป้าย/ท่าเรือ (ใช้ทำช่องเลือกจุดในฟอร์ม) — ไม่ใส่ `q` = คืนทั้งหมด (สูงสุด 50 รายการ)
+ค้นหาจุดด้วยคำ (ไว้ทำช่องค้นหาแบบพิมพ์) — คืนสูงสุด 50 รายการ
 
 - `q` (ไม่บังคับ): คำค้นในชื่อไทย ชื่ออังกฤษ หรือ id
-- `mode` (ไม่บังคับ): `rail` | `bus` | `boat`
+- `mode` (ไม่บังคับ): `rail` | `train` | `bus` | `boat`
 
 ```json
 {
@@ -72,14 +98,53 @@
 {
   "lines": [
     { "id": "SMP-RED", "name_th": "[ตัวอย่าง] สายสีแดงสมมติ", "mode": "rail",
-      "operator": "SAMPLE_RAIL", "stops": ["SMP-A1", "SMP-A2"] }
+      "operator": "SAMPLE_RAIL", "color": "#C8102E", "stops": ["SMP-A1", "SMP-A2", "SMP-C0", "SMP-A3", "SMP-A4"] }
   ]
 }
 ```
 
+### `POST /api/trips/options`
+
+ทางเลือกทั้งทริปสำหรับหน้าเทียบ: ถูกที่สุด / เร็วที่สุด / ต่อรถน้อยที่สุด (ตัดเส้นทางที่ซ้ำกันออก) — **หน้าแรกใช้อันนี้**
+
+Request:
+
+```json
+{ "waypoints": ["SMP-A1", "SMP-P2", "SMP-A4"] }
+```
+
+- `waypoints`: id ของจุด 2–6 จุด เรียงตามลำดับที่จะไป (จุดติดกันห้ามซ้ำกัน)
+
+Response `200` (ผลจริงจากข้อมูลตัวอย่าง):
+
+```jsonc
+{
+  "options": [
+    {
+      "labels": ["cheapest", "fewest_transfers"],
+      "segments": [ /* รูปแบบเดียวกับ /api/trips/plan */ ],
+      "total": { "minutes": 71, "fare": 65, "transfers": 3 }
+    },
+    {
+      "labels": ["fastest"],
+      "segments": [ /* ... */ ],
+      "total": { "minutes": 68, "fare": 82, "transfers": 4 }
+    }
+  ],
+  "best": { "fastest": 1, "cheapest": 0, "fewest_transfers": 0 },
+  "warnings": ["ราคาคำนวณจากข้อมูลตัวอย่าง ไม่ใช่ราคาจริง"],
+  "data_checked_at": "2026-10-20"
+}
+```
+
+- `options` เรียงจากถูกไปแพง (ราคาเท่ากันเรียงตามเวลา) มี 1–3 รายการ
+- `best` = ตำแหน่งใน `options` ของทางที่ดีที่สุดในแต่ละเกณฑ์ ตัดสินจาก**ค่าจริง** (ราคาจริง เวลา จำนวนต่อรถ)
+- `labels` = เกณฑ์ที่ทางนี้ชนะ (ใช้ตั้งชื่อ เช่น "ประหยัดที่สุด และต่อรถน้อยที่สุด")
+- Errors: `400 INVALID_INPUT`, `404 STOP_NOT_FOUND`, `422 NO_ROUTE`
+
 ### `POST /api/trips/plan`
 
-หาเส้นทางผ่านจุดตามลำดับ (2–6 จุด) พร้อมเวลาและราคารวม
+เส้นทางเดียวตามเกณฑ์ที่เลือก
 
 Request:
 
@@ -87,10 +152,9 @@ Request:
 { "waypoints": ["SMP-A1", "SMP-P2", "SMP-A4"], "optimize": "fastest" }
 ```
 
-- `waypoints`: id ของจุด 2–6 จุด เรียงตามลำดับที่จะไป (จุดติดกันห้ามซ้ำกัน)
-- `optimize`: `"fastest"` (ค่าเริ่มต้น) หรือ `"cheapest"`
+- `optimize`: `"fastest"` (ค่าเริ่มต้น) | `"cheapest"` | `"fewest_transfers"`
 
-Response `200` (ผลจริงจากข้อมูลตัวอย่าง — ช่วงที่ 2 ตัดออกให้สั้น ดูฉบับเต็มใน `client/src/mocks/plan.json`):
+Response `200` (ผลจริงจากข้อมูลตัวอย่าง — ช่วงที่ 2 ตัดออกให้สั้น ฉบับเต็มดู `client/src/mocks/plan.json`):
 
 ```json
 {
@@ -101,10 +165,11 @@ Response `200` (ผลจริงจากข้อมูลตัวอย่�
       "to": "SMP-P2",
       "minutes": 34,
       "fare": 41,
+      "transfers": 2,
       "legs": [
         {
           "type": "ride",
-          "line_id": "SMP-RED", "line_name": "[ตัวอย่าง] สายสีแดงสมมติ", "mode": "rail",
+          "line_id": "SMP-RED", "line_name": "[ตัวอย่าง] สายสีแดงสมมติ", "line_color": "#C8102E", "mode": "rail",
           "from_stop": "SMP-A1", "from_name": "[ตัวอย่าง] ต้นสายแดง",
           "to_stop": "SMP-C0", "to_name": "[ตัวอย่าง] ชุมทางกลาง",
           "num_stops": 2, "wait_minutes": 3, "ride_minutes": 5, "minutes": 8,
@@ -112,7 +177,7 @@ Response `200` (ผลจริงจากข้อมูลตัวอย่�
         },
         {
           "type": "ride",
-          "line_id": "SMP-SKY", "line_name": "[ตัวอย่าง] สายสีฟ้าสมมติ", "mode": "rail",
+          "line_id": "SMP-SKY", "line_name": "[ตัวอย่าง] สายสีฟ้าสมมติ", "line_color": "#2AA4D6", "mode": "rail",
           "from_stop": "SMP-C0", "from_name": "[ตัวอย่าง] ชุมทางกลาง",
           "to_stop": "SMP-B2", "to_name": "[ตัวอย่าง] ริมน้ำ",
           "num_stops": 1, "wait_minutes": 4, "ride_minutes": 3, "minutes": 7,
@@ -126,7 +191,7 @@ Response `200` (ผลจริงจากข้อมูลตัวอย่�
         },
         {
           "type": "ride",
-          "line_id": "SMP-BOAT", "line_name": "[ตัวอย่าง] เรือด่วนสมมติ", "mode": "boat",
+          "line_id": "SMP-BOAT", "line_name": "[ตัวอย่าง] เรือด่วนสมมติ", "line_color": "#E07A12", "mode": "boat",
           "from_stop": "SMP-P1", "from_name": "[ตัวอย่าง] ท่าเรือริมน้ำ",
           "to_stop": "SMP-P2", "to_name": "[ตัวอย่าง] ท่าเรือวัด",
           "num_stops": 1, "wait_minutes": 8, "ride_minutes": 6, "minutes": 14,
@@ -143,16 +208,18 @@ Response `200` (ผลจริงจากข้อมูลตัวอย่�
 
 หมายเหตุ:
 - `segments` มีจำนวน = จำนวน waypoints − 1 (หนึ่งช่วงต่อการเดินทางระหว่างจุดติดกัน)
-- `fare_included_in_previous: true` = ต่อสายในระบบเดียวกันโดยไม่ต้องจ่ายใหม่ (ราคาถูกรวมไว้ในช่วงก่อนหน้า) → `fare` ของ leg นั้นเป็น 0
-- `transfers` = จำนวนครั้งที่เปลี่ยนรถทั้งทริป (ไม่นับการลงที่จุดแวะ)
+- `transfers` ของช่วง = จำนวนครั้งที่เปลี่ยนรถในช่วงนั้น (ไม่นับการลงที่จุดแวะ), ของทั้งทริป = ผลรวมทุกช่วง
+- `fare_included_in_previous: true` = เปลี่ยนสายในระบบเดียวกันโดยไม่ต้องจ่ายใหม่ (ราคารวมอยู่ใน leg ก่อนหน้า) → `fare` ของ leg นั้นเป็น 0
+- `line_color` = สีประจำสายจาก `data/lines.json` (`null` ถ้าไม่ได้ใส่ — หน้าเว็บใช้สีตามประเภทแทน)
+- `ranges` (ride) = ช่วงลำดับจุดในสาย (`stops` ของสายนั้น) ที่นั่งผ่าน เช่น `[[3, 8]]` ปกติมีช่วงเดียว
+  ถ้านั่งผ่านจุดที่สายวนกลับมา (สายสีน้ำเงินที่ท่าพระ) จะมีสองช่วง — ใช้ตัดเส้นบนแผนที่
+- `time_estimated: true` (ride) = เวลาของสายนี้ประมาณจากระยะทาง (ฟีดยังไม่มีเวลาจริง)
+- `service_hours` (ride, มีเฉพาะสายที่ไม่ได้วิ่งทั้งวัน) = ช่วงเวลาที่มีรถ/เรือ**ที่จุดขึ้น ในทิศที่นั่ง**
+  `{ "weekday": [["06:20","09:15"], ...], "weekend": [] }` (รายการว่าง = วันนั้นไม่มี)
 - `warnings` ให้หน้าเว็บแสดงเสมอถ้ามี
 - Errors: `400 INVALID_INPUT`, `404 STOP_NOT_FOUND`, `422 NO_ROUTE`
 
----
-
-## ส่วน D — นัดเจอกลุ่ม
-
-### `POST /api/meetup` 🚧
+### `POST /api/meetup` 🚧 ถ้ามีเวลา
 
 หาจุดนัดที่ค่าเดินทางรวมของทุกคนถูกที่สุด (หรือที่คนจ่ายแพงสุดจ่ายน้อยที่สุด)
 
@@ -163,8 +230,8 @@ Request:
 ```
 
 - `origins`: จุดเริ่มต้นของแต่ละคน 2–6 จุด
-- `strategy`: `"min_total"` (ค่าเดินทางรวมถูกสุด, ค่าเริ่มต้น) หรือ `"min_max"` (ให้คนที่จ่ายแพงสุดจ่ายน้อยที่สุด = ยุติธรรมกว่า)
-- `optimize`: `"cheapest"` (ค่าเริ่มต้น) หรือ `"fastest"`
+- `strategy`: `"min_total"` (ค่ารถรวมถูกสุด, ค่าเริ่มต้น) | `"min_max"` (ไม่ให้ใครจ่ายหนักอยู่คนเดียว)
+- `optimize`: `"cheapest"` (ค่าเริ่มต้น) | `"fastest"`
 
 Response `200`:
 
@@ -185,35 +252,30 @@ Response `200`:
 }
 ```
 
-- `per_person` ใช้ `origin_index` แทน id ของจุดเริ่มต้น — **ถ้าต่อยอดเป็นกลุ่มหลายบัญชี ห้ามส่งจุดเริ่มต้นของคนอื่นกลับไป** (PDPA: บอกได้ว่าคนนั้นอยู่ที่ไหน)
+- `per_person` ใช้ `origin_index` แทน id ของจุดเริ่มต้น — ห้ามส่งจุดเริ่มต้นของคนอื่นกลับไป (บอกได้ว่าคนนั้นอยู่ที่ไหน)
 - `alternatives` สูงสุด 3 รายการ
 
 ---
 
-## ส่วน C — บัญชีผู้ใช้และสถานที่บันทึก 🚧
+## เข้าสู่ระบบและแอดมิน (เพื่อน)
 
-ล็อกอินแบบ session cookie (`httpOnly`, `sameSite=lax`, `secure` ตอน production) — client ต้องส่ง cookie ทุกครั้ง (`credentials: "include"`)
+- มีแต่**บัญชีผู้ดูแล** ไม่เปิดให้คนทั่วไปสมัคร สร้างบัญชีด้วย `npm run create-admin` ใน `server/`
+- ล็อกอินแบบ session cookie (`httpOnly`, `sameSite=lax`, `secure` ตอน production) — หน้าเว็บส่ง cookie ทุกครั้ง (`credentials: "include"` มีใน `client/src/api.js` แล้ว)
 
 | Method | Path | Body | Response |
 |---|---|---|---|
-| POST | `/api/auth/register` | `{ "email", "password" }` (รหัสผ่าน 8–72 ตัว) | `201 { "user": { "id", "email" } }` / `409 CONFLICT` |
-| POST | `/api/auth/login` | `{ "email", "password" }` | `200 { "user": { "id", "email" } }` + ตั้ง cookie / `401` |
+| POST | `/api/auth/login` | `{ "email", "password" }` | `200 { "user": { "id", "email", "role" } }` + ตั้ง cookie / `401 UNAUTHORIZED` |
 | POST | `/api/auth/logout` | – | `204` |
-| GET | `/api/me` | – | `200 { "user": { "id", "email", "role", "created_at" } }` / `401` |
-| GET | `/api/me/export` | – | `200` ข้อมูลทั้งหมดของผู้ใช้เป็น JSON (สิทธิ์ตาม PDPA) |
-| DELETE | `/api/me` | `{ "password" }` | `204` ลบบัญชีและสถานที่บันทึก, รีพอร์ตเดิมเปลี่ยนเป็นไม่ระบุตัวตน |
-| GET | `/api/places` | – | `200 { "places": [ { "id", "label", "stop_id" } ] }` |
-| POST | `/api/places` | `{ "label", "stop_id" }` (label 1–30 ตัว) | `201 { "place": { "id", "label", "stop_id" } }` |
-| DELETE | `/api/places/:id` | – | `204` (ลบได้เฉพาะของตัวเอง) |
+| GET | `/api/me` | – | `200 { "user": { "id", "email", "role" } }` / `401` |
+| GET | `/api/admin/security-events` | – | `200 { "events": [ { "id", "kind", "ip_hash", "detail", "created_at" } ] }` 100 รายการล่าสุด |
 
-- ข้อความ error ตอนล็อกอินผิดต้องเหมือนกันทุกกรณี ("อีเมลหรือรหัสผ่านไม่ถูกต้อง") ไม่บอกว่าอีเมลมีอยู่หรือไม่
-- **สถานที่บันทึกเก็บเป็น `stop_id` ของสถานี/ป้ายใกล้บ้าน ไม่เก็บที่อยู่หรือพิกัดจริง** (data minimization)
+- ล็อกอินผิด: ข้อความเดียวกันทุกกรณี "อีเมลหรือรหัสผ่านไม่ถูกต้อง" ไม่บอกว่าอีเมลมีอยู่หรือไม่ และบันทึก `security_events` kind `login_failed`
+- `/api/admin/*` ต้องล็อกอินและเป็น `admin` (ใช้ `requireAdmin` ใน `server/src/middleware/requireAuth.js`)
+- `ip_hash` แสดงแค่ 8 ตัวแรกในหน้าแอดมินก็พอ
 
----
+### แจ้งราคาไม่ตรง 🚧 ถ้ามีเวลา
 
-## ส่วน D — แจ้งข้อมูลผิดและแอดมิน 🚧
-
-### `POST /api/reports` (ต้องล็อกอิน)
+**`POST /api/reports`** (ไม่ต้องล็อกอิน)
 
 ```json
 { "type": "fare_wrong", "line_id": "SMP-BUS1", "stop_id": null, "proposed_fare": 10, "website": "" }
@@ -221,27 +283,18 @@ Response `200`:
 
 - `type`: `"fare_wrong"` (ต้องมี `proposed_fare` 0–200) | `"stop_moved"` (ต้องมี `stop_id`) | `"line_cancelled"`
 - **ไม่มีช่องข้อความอิสระ** (ตั้งใจ — ไม่ต้องกรองคำหยาบ ไม่มีที่ให้ใส่ลิงก์สแปม)
-- `website` = ช่อง honeypot ที่ซ่อนในฟอร์ม คนจริงจะเว้นว่าง ถ้ามีค่า server ตอบ `201` เหมือนปกติแต่**ไม่บันทึก** และเก็บลง `security_events`
+- `website` = ช่อง honeypot ที่ซ่อนในฟอร์ม คนจริงจะเว้นว่าง ถ้ามีค่า server ตอบ `201` เหมือนปกติแต่**ไม่บันทึก** และเก็บลง `security_events` kind `honeypot`
 - Response `201`: `{ "report": { "id": 1, "status": "pending" } }`
 
-### `GET /api/reports/summary?line_id=`
-
-```json
-{ "line_id": "SMP-BUS1", "pending": [ { "type": "fare_wrong", "proposed_fare": 10, "reporters": 2 } ] }
-```
-
-หน้าเว็บใช้แสดง "มีผู้แจ้งว่าราคาอาจเปลี่ยน" — **ราคาที่ใช้คำนวณยังเป็นราคาเดิม**จนกว่าแอดมินอนุมัติ
-
-### แอดมิน (ต้องเป็น role `admin`)
+**แอดมิน**
 
 | Method | Path | ทำอะไร |
 |---|---|---|
-| GET | `/api/admin/reports?status=pending` | ดูรีพอร์ตที่รอตรวจ จัดกลุ่มตาม (สาย, ประเภท, ราคาที่เสนอ) พร้อมจำนวนผู้แจ้งที่ต่างกันจริง |
-| POST | `/api/admin/reports/:id/approve` | อนุมัติ → แอดมินแก้ `data/fares.json` ผ่าน PR โดยใส่ `source` เป็นเลขรีพอร์ต |
-| POST | `/api/admin/reports/:id/reject` | ปฏิเสธ (ลด `trust_score` ของผู้แจ้ง) |
-| GET | `/api/admin/security-events` | log สิ่งที่ระบบบล็อก (สำหรับทำ dashboard) |
+| GET | `/api/admin/reports?status=pending` | รายการที่รอตรวจ จัดกลุ่มตาม (สาย, ประเภท, ราคาที่เสนอ) พร้อมจำนวนคนแจ้งที่ต่างกันจริง (`COUNT(DISTINCT ip_hash)`) |
+| POST | `/api/admin/reports/:id/approve` | อนุมัติ → คนหลักแก้ `data/fares.json` ผ่าน PR โดยใส่เลขรีพอร์ตใน `source` |
+| POST | `/api/admin/reports/:id/reject` | ปฏิเสธ |
 
-**เกณฑ์ที่ควรใช้ก่อนเสนอให้อนุมัติ:** มีผู้แจ้งตรงกัน ≥ 3 คน ที่ต่างกันทั้งบัญชีและ IP, บัญชีอายุ ≥ 1 วัน และราคาที่เสนออยู่ในช่วงสมเหตุสมผลของประเภทรถ
+ราคาที่ใช้คำนวณ**ไม่เปลี่ยนตามรีพอร์ตโดยตรง** ต้องผ่านแอดมินเสมอ
 
 ---
 
@@ -249,8 +302,8 @@ Response `200`:
 
 | ขอบเขต | จำกัด |
 |---|---|
-| ทั้ง API | 300 ครั้ง / 15 นาที |
-| `/api/auth/*` | 10 ครั้ง / 15 นาที |
-| `POST /api/reports` | 5 ครั้ง / วัน / ผู้ใช้ |
+| ทั้ง API | 300 ครั้ง / 15 นาที (มีแล้ว) |
+| `/api/auth/*` | 10 ครั้ง / 15 นาที (เพื่อนทำ) |
+| `POST /api/reports` | 5 ครั้ง / วัน (เพื่อนทำ) |
 
-เกินแล้วตอบ `429 RATE_LIMITED` และบันทึกลง `security_events`
+เกินแล้วตอบ `429 RATE_LIMITED` และบันทึกลง `security_events` kind `rate_limited`

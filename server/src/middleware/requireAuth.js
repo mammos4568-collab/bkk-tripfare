@@ -2,7 +2,7 @@ import { AppError } from '../errors.js';
 
 /**
  * ใช้คุมสิทธิ์ใน route ที่ต้องล็อกอิน
- * ทำงานได้ทันทีเมื่อส่วน C ตั้ง session แล้ว และตอนล็อกอินสำเร็จเก็บ
+ * ทำงานได้ทันทีเมื่อตั้ง session แล้ว (ดู routes/auth.js) และตอนล็อกอินสำเร็จเก็บ
  *   req.session.userId = user.id
  *   req.session.role   = user.role
  *

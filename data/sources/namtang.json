@@ -1,0 +1,104 @@
+{
+  "$comment": "ตั้งค่าการดึงข้อมูลจากฟีด Namtang GTFS ของ สนข. — วิธีใช้ดู data/README.md",
+  "feed": {
+    "publisher": "สำนักงานนโยบายและแผนการขนส่งและจราจร (สนข.) กระทรวงคมนาคม",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "info_url": "https://namtang-api.otp.go.th/opendata",
+    "download_url": "https://namtang-api.otp.go.th/download/namtang-gtfs.zip"
+  },
+  "headway_window": ["07:00", "20:00"],
+  "skip_stop_name_patterns": ["ปิดปรับปรุง", "\\(Close\\)"],
+  "stop_names": {
+    "212": "กรุงเทพ (หัวลำโพง)",
+    "14633": "โทรคมนาคมแห่งชาติ"
+  },
+  "estimate": {
+    "plausible_kmh": { "rail": [15, 60], "train": [15, 50], "boat": [10, 30] },
+    "default_kmh": { "rail": 32, "train": 28, "boat": 18 }
+  },
+  "walk": {
+    "meters_per_minute": 70,
+    "extra_minutes": 2,
+    "extra_minutes_boat": 1,
+    "max_meters": {
+      "rail-rail": 450,
+      "rail-train": 450,
+      "train-train": 450,
+      "boat-rail": 450,
+      "boat-train": 450,
+      "boat-boat": 250
+    },
+    "barrier_routes": ["182", "180", "181"]
+  },
+  "extra_transfers": [],
+  "drop_isolated_lines": true,
+  "fare_groups": {
+    "bts": {
+      "source": "blank_agency",
+      "agency_id": "BTSC",
+      "merge_transfers": true,
+      "note": "ต่อสายสุขุมวิทกับสายสีลมคิดเป็นเที่ยวเดียว"
+    },
+    "bts-gold": { "source": "blank_agency", "agency_id": "BTSC" },
+    "mrt-pink": { "merge_transfers": true }
+  },
+  "lines": [
+    { "id": "BTS-SUK", "route_id": "1", "mode": "rail", "name_th": "BTS สายสุขุมวิท", "stop_prefix": "BTS", "fare_group": "bts" },
+    { "id": "BTS-SIL", "route_id": "2", "mode": "rail", "name_th": "BTS สายสีลม", "stop_prefix": "BTS", "fare_group": "bts" },
+    { "id": "BTS-GLD", "route_id": "2025", "mode": "rail", "name_th": "รถไฟฟ้าสายสีทอง", "stop_prefix": "BTS", "fare_group": "bts-gold" },
+    { "id": "MRT-BL", "route_id": "3", "mode": "rail", "name_th": "MRT สายสีน้ำเงิน", "stop_prefix": "MRT", "fare_group": "mrt-blue", "join_patterns": true },
+    { "id": "MRT-PP", "route_id": "4", "mode": "rail", "name_th": "MRT สายสีม่วง", "stop_prefix": "MRT", "fare_group": "mrt-purple" },
+    { "id": "MRT-YL", "route_id": "2224", "mode": "rail", "name_th": "MRT สายสีเหลือง", "stop_prefix": "MRT", "fare_group": "mrt-yellow" },
+    { "id": "MRT-PK", "route_id": "2436", "mode": "rail", "name_th": "MRT สายสีชมพู", "stop_prefix": "MRT", "fare_group": "mrt-pink" },
+    {
+      "id": "MRT-PK-MTT",
+      "route_id": "2436",
+      "mode": "rail",
+      "name_th": "MRT สายสีชมพู (ส่วนต่อขยายเมืองทองธานี)",
+      "group_th": "MRT สายสีชมพู",
+      "stop_prefix": "MRT",
+      "fare_group": "mrt-pink",
+      "pattern": { "contains_stop": "16937" }
+    },
+    { "id": "ARL", "route_id": "5", "mode": "rail", "name_th": "แอร์พอร์ต เรล ลิงก์", "stop_prefix": "ARL", "fare_group": "arl" },
+    { "id": "RED-DARK", "route_id": "2026", "mode": "rail", "name_th": "รถไฟฟ้าสายสีแดงเข้ม", "stop_prefix": "RED", "fare_group": "red-dark" },
+    { "id": "RED-LIGHT", "route_id": "2027", "mode": "rail", "name_th": "รถไฟฟ้าสายสีแดงอ่อน", "stop_prefix": "RED", "fare_group": "red-light" },
+    {
+      "id": "SRT-EAST",
+      "mode": "train",
+      "name_th": "รถไฟสายตะวันออก (กรุงเทพ–หัวตะเข้)",
+      "group_th": "รถไฟสายตะวันออก",
+      "agency_id": "SRT",
+      "trains_through": "242",
+      "stops": ["212", "225", "237", "238", "226", "240", "229", "241", "230", "231", "232", "233", "242", "234"],
+      "stop_prefix": "SRT",
+      "color": "#8A4B2D",
+      "time": "estimate",
+      "fare_group": "srt-east"
+    },
+    { "id": "CPX-ORANGE", "route_id": "182", "mode": "boat", "name_th": "เรือด่วนธงส้ม", "group_th": "ท่าเรือแม่น้ำเจ้าพระยา", "stop_prefix": "PIER", "speed_kmh": 22 },
+    { "id": "CPX-YELLOW", "route_id": "183", "mode": "boat", "name_th": "เรือด่วนธงเหลือง", "group_th": "ท่าเรือแม่น้ำเจ้าพระยา", "stop_prefix": "PIER", "speed_kmh": 24 },
+    { "id": "CPX-YELLOW-DAY", "route_id": "2715", "mode": "boat", "name_th": "เรือด่วนธงเหลือง (กลางวัน)", "group_th": "ท่าเรือแม่น้ำเจ้าพระยา", "stop_prefix": "PIER", "speed_kmh": 22 },
+    { "id": "CPX-GREEN", "route_id": "180", "mode": "boat", "name_th": "เรือด่วนธงเขียวเหลือง", "group_th": "ท่าเรือแม่น้ำเจ้าพระยา", "stop_prefix": "PIER", "speed_kmh": 24 },
+    { "id": "CPX-RED", "route_id": "2073", "mode": "boat", "name_th": "เรือด่วนธงแดง", "group_th": "ท่าเรือแม่น้ำเจ้าพระยา", "stop_prefix": "PIER", "speed_kmh": 26 },
+    { "id": "CPX-LOCAL", "route_id": "181", "mode": "boat", "name_th": "เรือประจำทาง (ไม่มีธง)", "group_th": "ท่าเรือแม่น้ำเจ้าพระยา", "stop_prefix": "PIER", "speed_kmh": 15 },
+    { "id": "TSB-CITY", "route_id": "2691", "mode": "boat", "name_th": "เรือไทยสมายล์ City Line", "group_th": "ท่าเรือแม่น้ำเจ้าพระยา", "stop_prefix": "PIER", "speed_kmh": 18 },
+    { "id": "TSB-URBAN", "route_id": "2693", "mode": "boat", "name_th": "เรือไทยสมายล์ Urban Line", "group_th": "ท่าเรือแม่น้ำเจ้าพระยา", "stop_prefix": "PIER", "speed_kmh": 18 },
+    { "id": "TSB-METRO", "route_id": "3478", "mode": "boat", "name_th": "เรือไทยสมายล์ Metro Line", "group_th": "ท่าเรือแม่น้ำเจ้าพระยา", "stop_prefix": "PIER", "speed_kmh": 18 },
+    {
+      "expand": { "agency_id": "ST", "route_short_name": "เรือข้ามฟาก" },
+      "id_prefix": "FERRY",
+      "mode": "boat",
+      "name_prefix_th": "เรือข้ามฟาก ",
+      "group_th": "ท่าเรือแม่น้ำเจ้าพระยา",
+      "color": "#3F6F8F",
+      "stop_prefix": "PIER",
+      "speed_kmh": 8
+    },
+    { "id": "SSB", "route_id": "185", "mode": "boat", "name_th": "เรือคลองแสนแสบ", "group_th": "เรือคลองแสนแสบ", "stop_prefix": "PIER", "speed_kmh": 15 },
+    { "id": "SSB-EXT", "route_id": "2520", "mode": "boat", "name_th": "เรือคลองแสนแสบ (วัดศรีบุญเรือง–มีนบุรี)", "group_th": "เรือคลองแสนแสบ", "stop_prefix": "PIER", "speed_kmh": 15 },
+    { "id": "PSC", "route_id": "184", "mode": "boat", "name_th": "เรือคลองภาษีเจริญ", "group_th": "เรือคลองภาษีเจริญ", "stop_prefix": "PIER", "speed_kmh": 14 },
+    { "id": "PDK", "route_id": "2013", "mode": "boat", "name_th": "เรือคลองผดุงกรุงเกษม", "group_th": "เรือคลองผดุงกรุงเกษม", "stop_prefix": "PIER", "speed_kmh": 10 }
+  ]
+}

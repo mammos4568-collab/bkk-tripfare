@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { access, readFile } from 'node:fs/promises';
 import path from 'node:path';
 
 /** อ่านข้อมูลขนส่งทั้งหมดจากโฟลเดอร์ data/ */
@@ -17,5 +17,13 @@ export async function loadData(dataDir) {
     read('transfers.json'),
     read('fares.json'),
   ]);
-  return { stops, lines, transfers, fares };
+  // shapes.json (เส้นทางจริงสำหรับวาดแผนที่) ไม่บังคับ — ไม่มีก็ยังหาเส้นทางได้
+  let shapes;
+  try {
+    await access(path.join(dataDir, 'shapes.json'));
+    shapes = await read('shapes.json');
+  } catch (err) {
+    if (err.code !== 'ENOENT') throw err;
+  }
+  return { stops, lines, transfers, fares, ...(shapes ? { shapes } : {}) };
 }

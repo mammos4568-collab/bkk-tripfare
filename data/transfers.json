@@ -1,5 +1,487 @@
 [
-  { "from": "SMP-A1", "to": "SMP-U1", "walk_minutes": 3 },
-  { "from": "SMP-B2", "to": "SMP-P1", "walk_minutes": 5 },
-  { "from": "SMP-U3", "to": "SMP-P3", "walk_minutes": 4 }
+  {
+    "from": "BTS-13831",
+    "to": "MRT-14636",
+    "walk_minutes": 4
+  },
+  {
+    "from": "BTS-13612",
+    "to": "MRT-339",
+    "walk_minutes": 8
+  },
+  {
+    "from": "BTS-37",
+    "to": "MRT-352",
+    "walk_minutes": 3
+  },
+  {
+    "from": "BTS-32",
+    "to": "ARL-321",
+    "walk_minutes": 4
+  },
+  {
+    "from": "BTS-32",
+    "to": "SRT-238",
+    "walk_minutes": 3
+  },
+  {
+    "from": "BTS-30",
+    "to": "PIER-174",
+    "walk_minutes": 7
+  },
+  {
+    "from": "BTS-25",
+    "to": "MRT-341",
+    "walk_minutes": 5
+  },
+  {
+    "from": "BTS-14",
+    "to": "MRT-14117",
+    "walk_minutes": 5
+  },
+  {
+    "from": "BTS-13",
+    "to": "PIER-174",
+    "walk_minutes": 8
+  },
+  {
+    "from": "BTS-10",
+    "to": "MRT-329",
+    "walk_minutes": 7
+  },
+  {
+    "from": "BTS-7",
+    "to": "PIER-92",
+    "walk_minutes": 5
+  },
+  {
+    "from": "BTS-7",
+    "to": "PIER-126",
+    "walk_minutes": 5
+  },
+  {
+    "from": "BTS-6",
+    "to": "BTS-13834",
+    "walk_minutes": 4
+  },
+  {
+    "from": "BTS-1",
+    "to": "MRT-13633",
+    "walk_minutes": 4
+  },
+  {
+    "from": "BTS-1",
+    "to": "PIER-306",
+    "walk_minutes": 6
+  },
+  {
+    "from": "BTS-13836",
+    "to": "PIER-140",
+    "walk_minutes": 9
+  },
+  {
+    "from": "BTS-13835",
+    "to": "PIER-13951",
+    "walk_minutes": 7
+  },
+  {
+    "from": "BTS-13835",
+    "to": "PIER-140",
+    "walk_minutes": 8
+  },
+  {
+    "from": "BTS-13835",
+    "to": "PIER-139",
+    "walk_minutes": 8
+  },
+  {
+    "from": "MRT-13644",
+    "to": "PIER-132",
+    "walk_minutes": 8
+  },
+  {
+    "from": "MRT-13642",
+    "to": "PIER-13945",
+    "walk_minutes": 5
+  },
+  {
+    "from": "MRT-334",
+    "to": "RED-13846",
+    "walk_minutes": 7
+  },
+  {
+    "from": "MRT-340",
+    "to": "MRT-14118",
+    "walk_minutes": 6
+  },
+  {
+    "from": "MRT-345",
+    "to": "ARL-324",
+    "walk_minutes": 7
+  },
+  {
+    "from": "MRT-345",
+    "to": "SRT-240",
+    "walk_minutes": 5
+  },
+  {
+    "from": "MRT-345",
+    "to": "PIER-180",
+    "walk_minutes": 5
+  },
+  {
+    "from": "MRT-345",
+    "to": "PIER-181",
+    "walk_minutes": 7
+  },
+  {
+    "from": "MRT-343",
+    "to": "SRT-212",
+    "walk_minutes": 5
+  },
+  {
+    "from": "MRT-343",
+    "to": "PIER-13591",
+    "walk_minutes": 8
+  },
+  {
+    "from": "MRT-343",
+    "to": "PIER-13590",
+    "walk_minutes": 5
+  },
+  {
+    "from": "MRT-13626",
+    "to": "PIER-99",
+    "walk_minutes": 6
+  },
+  {
+    "from": "MRT-13626",
+    "to": "PIER-128",
+    "walk_minutes": 6
+  },
+  {
+    "from": "MRT-13632",
+    "to": "PIER-303",
+    "walk_minutes": 8
+  },
+  {
+    "from": "MRT-13632",
+    "to": "PIER-304",
+    "walk_minutes": 8
+  },
+  {
+    "from": "MRT-13633",
+    "to": "PIER-306",
+    "walk_minutes": 6
+  },
+  {
+    "from": "MRT-13633",
+    "to": "PIER-307",
+    "walk_minutes": 9
+  },
+  {
+    "from": "MRT-13634",
+    "to": "PIER-308",
+    "walk_minutes": 5
+  },
+  {
+    "from": "MRT-13635",
+    "to": "PIER-310",
+    "walk_minutes": 9
+  },
+  {
+    "from": "MRT-335",
+    "to": "RED-13849",
+    "walk_minutes": 7
+  },
+  {
+    "from": "MRT-358",
+    "to": "PIER-13947",
+    "walk_minutes": 6
+  },
+  {
+    "from": "MRT-14126",
+    "to": "PIER-195",
+    "walk_minutes": 8
+  },
+  {
+    "from": "MRT-14126",
+    "to": "PIER-196",
+    "walk_minutes": 8
+  },
+  {
+    "from": "MRT-14128",
+    "to": "SRT-230",
+    "walk_minutes": 6
+  },
+  {
+    "from": "MRT-14634",
+    "to": "RED-5413",
+    "walk_minutes": 6
+  },
+  {
+    "from": "MRT-14649",
+    "to": "PIER-15996",
+    "walk_minutes": 8
+  },
+  {
+    "from": "MRT-14650",
+    "to": "PIER-15997",
+    "walk_minutes": 9
+  },
+  {
+    "from": "ARL-321",
+    "to": "SRT-238",
+    "walk_minutes": 5
+  },
+  {
+    "from": "ARL-324",
+    "to": "SRT-240",
+    "walk_minutes": 5
+  },
+  {
+    "from": "ARL-324",
+    "to": "PIER-179",
+    "walk_minutes": 8
+  },
+  {
+    "from": "ARL-324",
+    "to": "PIER-180",
+    "walk_minutes": 8
+  },
+  {
+    "from": "ARL-328",
+    "to": "SRT-241",
+    "walk_minutes": 3
+  },
+  {
+    "from": "ARL-328",
+    "to": "PIER-187",
+    "walk_minutes": 6
+  },
+  {
+    "from": "ARL-328",
+    "to": "PIER-188",
+    "walk_minutes": 4
+  },
+  {
+    "from": "ARL-323",
+    "to": "SRT-231",
+    "walk_minutes": 3
+  },
+  {
+    "from": "ARL-322",
+    "to": "SRT-233",
+    "walk_minutes": 3
+  },
+  {
+    "from": "SRT-212",
+    "to": "PIER-13591",
+    "walk_minutes": 6
+  },
+  {
+    "from": "SRT-212",
+    "to": "PIER-13590",
+    "walk_minutes": 4
+  },
+  {
+    "from": "SRT-240",
+    "to": "PIER-179",
+    "walk_minutes": 9
+  },
+  {
+    "from": "SRT-240",
+    "to": "PIER-180",
+    "walk_minutes": 7
+  },
+  {
+    "from": "SRT-229",
+    "to": "PIER-184",
+    "walk_minutes": 9
+  },
+  {
+    "from": "SRT-229",
+    "to": "PIER-185",
+    "walk_minutes": 6
+  },
+  {
+    "from": "SRT-241",
+    "to": "PIER-187",
+    "walk_minutes": 6
+  },
+  {
+    "from": "SRT-241",
+    "to": "PIER-188",
+    "walk_minutes": 5
+  },
+  {
+    "from": "PIER-92",
+    "to": "PIER-126",
+    "walk_minutes": 3
+  },
+  {
+    "from": "PIER-94",
+    "to": "PIER-18397",
+    "walk_minutes": 4
+  },
+  {
+    "from": "PIER-94",
+    "to": "PIER-14192",
+    "walk_minutes": 4
+  },
+  {
+    "from": "PIER-94",
+    "to": "PIER-127",
+    "walk_minutes": 3
+  },
+  {
+    "from": "PIER-96",
+    "to": "PIER-143",
+    "walk_minutes": 2
+  },
+  {
+    "from": "PIER-99",
+    "to": "PIER-98",
+    "walk_minutes": 5
+  },
+  {
+    "from": "PIER-99",
+    "to": "PIER-128",
+    "walk_minutes": 2
+  },
+  {
+    "from": "PIER-16593",
+    "to": "PIER-146",
+    "walk_minutes": 4
+  },
+  {
+    "from": "PIER-101",
+    "to": "PIER-163",
+    "walk_minutes": 2
+  },
+  {
+    "from": "PIER-102",
+    "to": "PIER-166",
+    "walk_minutes": 2
+  },
+  {
+    "from": "PIER-103",
+    "to": "PIER-144",
+    "walk_minutes": 2
+  },
+  {
+    "from": "PIER-107",
+    "to": "PIER-164",
+    "walk_minutes": 2
+  },
+  {
+    "from": "PIER-107",
+    "to": "PIER-13600",
+    "walk_minutes": 4
+  },
+  {
+    "from": "PIER-109",
+    "to": "PIER-110",
+    "walk_minutes": 4
+  },
+  {
+    "from": "PIER-109",
+    "to": "PIER-133",
+    "walk_minutes": 2
+  },
+  {
+    "from": "PIER-120",
+    "to": "PIER-130",
+    "walk_minutes": 2
+  },
+  {
+    "from": "PIER-125",
+    "to": "PIER-168",
+    "walk_minutes": 2
+  },
+  {
+    "from": "PIER-98",
+    "to": "PIER-128",
+    "walk_minutes": 4
+  },
+  {
+    "from": "PIER-110",
+    "to": "PIER-133",
+    "walk_minutes": 4
+  },
+  {
+    "from": "PIER-16592",
+    "to": "PIER-156",
+    "walk_minutes": 3
+  },
+  {
+    "from": "PIER-18397",
+    "to": "PIER-127",
+    "walk_minutes": 3
+  },
+  {
+    "from": "PIER-14192",
+    "to": "PIER-127",
+    "walk_minutes": 5
+  },
+  {
+    "from": "PIER-137",
+    "to": "PIER-165",
+    "walk_minutes": 4
+  },
+  {
+    "from": "PIER-164",
+    "to": "PIER-13600",
+    "walk_minutes": 4
+  },
+  {
+    "from": "PIER-172",
+    "to": "PIER-13595",
+    "walk_minutes": 5
+  },
+  {
+    "from": "PIER-182",
+    "to": "PIER-13948",
+    "walk_minutes": 3
+  },
+  {
+    "from": "PIER-187",
+    "to": "PIER-188",
+    "walk_minutes": 4
+  },
+  {
+    "from": "PIER-15994",
+    "to": "PIER-15993",
+    "walk_minutes": 3
+  },
+  {
+    "from": "PIER-303",
+    "to": "PIER-304",
+    "walk_minutes": 5
+  },
+  {
+    "from": "PIER-310",
+    "to": "PIER-311",
+    "walk_minutes": 4
+  },
+  {
+    "from": "PIER-311",
+    "to": "PIER-312",
+    "walk_minutes": 5
+  },
+  {
+    "from": "PIER-312",
+    "to": "PIER-313",
+    "walk_minutes": 5
+  },
+  {
+    "from": "PIER-13593",
+    "to": "PIER-13592",
+    "walk_minutes": 5
+  },
+  {
+    "from": "PIER-13591",
+    "to": "PIER-13590",
+    "walk_minutes": 5
+  }
 ]
