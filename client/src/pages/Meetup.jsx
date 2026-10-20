@@ -1,16 +1,14 @@
 /**
- * ส่วน D — หน้านัดเจอกลุ่ม
- * API: findMeetup() ใน src/api.js (server ยังตอบ 501 จนกว่าส่วน D จะทำ routes/meetup.js)
- * ใช้ VITE_USE_MOCK=true เพื่อดูหน้าตาด้วยข้อมูลจำลองได้เลย
+ * นัดเจอกลุ่ม (คนหลัก — ทำถ้ามีเวลา)
+ * API: findMeetup() ใน src/api.js — server ยังตอบ 501 จนกว่าจะทำ server/src/routes/meetup.js
+ * เปิดใช้ในเว็บจริงด้วย src/features.js (meetup: true)
  *
- * TODO (ส่วน D):
- *  - ปรับหน้าตา, แสดง alternatives, ปุ่ม "วางแผนเดินทางไปจุดนี้"
- *  - ห้ามแสดงจุดเริ่มต้นของคนอื่นถ้าต่อยอดเป็นกลุ่มหลายบัญชี (ใช้ origin_index)
+ * ห้ามแสดงจุดเริ่มต้นของคนอื่น ถ้าต่อยอดเป็นกลุ่มหลายคนจริง (ใช้ origin_index)
  */
 import { useEffect, useState } from 'react';
 import { findMeetup, getStops } from '../api.js';
 import StopSelect from '../components/StopSelect.jsx';
-import { baht } from '../labels.js';
+import { num } from '../labels.js';
 
 const MAX_PEOPLE = 6;
 
@@ -31,15 +29,15 @@ export default function Meetup() {
   async function handleSubmit(event) {
     event.preventDefault();
     setError('');
-    setResult(null);
     if (origins.some((o) => !o)) {
-      setError('กรุณาเลือกจุดเริ่มต้นของทุกคน');
+      setError('เลือกจุดเริ่มต้นของทุกคนก่อน');
       return;
     }
     setLoading(true);
     try {
       setResult(await findMeetup(origins, strategy));
     } catch (err) {
+      setResult(null);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -47,83 +45,90 @@ export default function Meetup() {
   }
 
   return (
-    <>
-      <form className="card" onSubmit={handleSubmit}>
-        <h2>หาจุดนัดที่ค่าเดินทางคุ้มที่สุด</h2>
-        <ol className="waypoints">
-          {origins.map((value, i) => (
-            <li key={i}>
-              <label className="sr-only" htmlFor={`origin-${i}`}>
-                จุดเริ่มต้นของคนที่ {i + 1}
-              </label>
-              <StopSelect
-                id={`origin-${i}`}
-                stops={stops}
-                value={value}
-                onChange={(v) => setOrigins((o) => o.map((x, j) => (j === i ? v : x)))}
-                placeholder={`คนที่ ${i + 1} ออกจาก…`}
-              />
-              {origins.length > 2 && (
-                <button
-                  type="button"
-                  className="icon-btn"
-                  onClick={() => setOrigins((o) => o.filter((_, j) => j !== i))}
-                  aria-label={`ลบคนที่ ${i + 1}`}
-                >
-                  ✕
-                </button>
-              )}
-            </li>
-          ))}
-        </ol>
-        {origins.length < MAX_PEOPLE && (
-          <button type="button" className="link-btn" onClick={() => setOrigins((o) => [...o, ''])}>
-            + เพิ่มคน
-          </button>
-        )}
+    <section className="section wrap" id="meetup" aria-labelledby="meetup-title">
+      <h2 id="meetup-title">นัดเพื่อนที่ไหนดี</h2>
+      <div className="section-body">
+        <p>ใส่จุดที่แต่ละคนจะออกเดินทาง แล้วเราจะหาที่นัดที่ค่ารถของทุกคนรวมกันแล้วคุ้มที่สุด</p>
 
-        <fieldset className="choice">
-          <legend>เลือกจุดนัดแบบ</legend>
-          <label>
-            <input
-              type="radio"
-              name="strategy"
-              checked={strategy === 'min_total'}
-              onChange={() => setStrategy('min_total')}
-            />{' '}
-            ค่าเดินทางรวมถูกสุด
-          </label>
-          <label>
-            <input type="radio" name="strategy" checked={strategy === 'min_max'} onChange={() => setStrategy('min_max')} />{' '}
-            ยุติธรรมสุด (คนที่จ่ายแพงสุดจ่ายน้อยที่สุด)
-          </label>
-        </fieldset>
-
-        <button type="submit" className="primary" disabled={loading}>
-          {loading ? 'กำลังคำนวณ…' : 'หาจุดนัด'}
-        </button>
-        {error && (
-          <p className="error" role="alert">
-            {error}
-          </p>
-        )}
-      </form>
-
-      {result && (
-        <section className="card result" aria-label="ผลจุดนัด">
-          <h3>นัดที่ {result.best.name}</h3>
-          <p className="muted">
-            รวมทุกคน {baht(result.best.total_fare)} · คนที่จ่ายมากสุด {baht(result.best.max_fare)}
-          </p>
-          <ul className="plain-list">
-            {result.per_person.map((p) => (
-              <li key={p.origin_index}>
-                คนที่ {p.origin_index + 1}: {baht(p.fare)} · {p.minutes} นาที
+        <form onSubmit={handleSubmit} className="narrow">
+          <ol className="stops people">
+            {origins.map((value, i) => (
+              <li key={i}>
+                <label className="sr-only" htmlFor={`origin-${i}`}>
+                  คนที่ {i + 1} ออกจาก
+                </label>
+                <StopSelect
+                  id={`origin-${i}`}
+                  stops={stops}
+                  value={value}
+                  onChange={(v) => setOrigins((o) => o.map((x, j) => (j === i ? v : x)))}
+                  placeholder={`คนที่ ${i + 1} ออกจาก`}
+                />
+                {origins.length > 2 && (
+                  <button
+                    type="button"
+                    className="text-btn quiet"
+                    onClick={() => setOrigins((o) => o.filter((_, j) => j !== i))}
+                  >
+                    เอาออก
+                  </button>
+                )}
               </li>
             ))}
-          </ul>
-        </section>
-      )}
-    </>
+          </ol>
+          {origins.length < MAX_PEOPLE && (
+            <button type="button" className="text-btn add-stop" onClick={() => setOrigins((o) => [...o, ''])}>
+              เพิ่มคน
+            </button>
+          )}
+
+          <fieldset className="radios">
+            <legend>เลือกที่นัดแบบ</legend>
+            <label>
+              <input
+                type="radio"
+                name="strategy"
+                checked={strategy === 'min_total'}
+                onChange={() => setStrategy('min_total')}
+              />
+              ค่ารถรวมทุกคนถูกที่สุด
+            </label>
+            <label>
+              <input type="radio" name="strategy" checked={strategy === 'min_max'} onChange={() => setStrategy('min_max')} />
+              ไม่ให้ใครต้องจ่ายหนักอยู่คนเดียว
+            </label>
+          </fieldset>
+
+          <button type="submit" className="go" disabled={loading}>
+            {loading ? 'กำลังหา…' : 'หาที่นัด'}
+          </button>
+          {error && (
+            <p className="error" role="alert">
+              {error}
+            </p>
+          )}
+        </form>
+
+        {result && (
+          <div className="meetup-result" aria-live="polite">
+            <p className="choice-name">นัดที่ {result.best.name}</p>
+            <p className="total">
+              {num(result.best.total_fare)}
+              <small>บาท รวมทุกคน</small>
+            </p>
+            <ul className="people-fares">
+              {result.per_person.map((p) => (
+                <li key={p.origin_index}>
+                  <span>คนที่ {p.origin_index + 1}</span>
+                  <span>
+                    <b>{num(p.fare)}</b> บาท {p.minutes} นาที
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </section>
   );
 }

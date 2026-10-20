@@ -1,49 +1,44 @@
-import { useState } from 'react';
+import AdminApp from './admin/AdminApp.jsx';
 import { USE_MOCK } from './api.js';
-import Account from './pages/Account.jsx';
+import { isOn } from './features.js';
 import Meetup from './pages/Meetup.jsx';
 import PlanTrip from './pages/PlanTrip.jsx';
-import Report from './pages/Report.jsx';
-
-// สลับหน้าด้วย state ไปก่อน — ส่วน B จะเปลี่ยนเป็น react-router ภายหลังก็ได้ (บอกทีมก่อนเพิ่ม library)
-const TABS = [
-  { id: 'plan', label: 'วางแผนเดินทาง', Page: PlanTrip }, // B
-  { id: 'meetup', label: 'นัดเจอกลุ่ม', Page: Meetup }, // D
-  { id: 'report', label: 'แจ้งข้อมูลผิด', Page: Report }, // D
-  { id: 'account', label: 'บัญชี', Page: Account }, // C
-];
+import DataInfo from './sections/DataInfo.jsx';
+import HowFares from './sections/HowFares.jsx';
 
 export default function App() {
-  const [tab, setTab] = useState('plan');
-  const { Page } = TABS.find((t) => t.id === tab);
+  // /admin = ระบบแอดมิน (เพื่อน) แยกจากหน้าเว็บของผู้ใช้
+  if (window.location.pathname.startsWith('/admin')) return <AdminApp />;
+
+  const showMeetup = isOn('meetup');
 
   return (
-    <div className="app">
-      <header className="app-header">
-        <h1>BKK TripFare</h1>
-        <p className="tagline">เดินทางหลายจุด รู้ราคารวมก่อนออกจากบ้าน</p>
-        {USE_MOCK && <span className="badge">โหมดข้อมูลจำลอง</span>}
+    <>
+      {USE_MOCK && <p className="mock-strip">โหมดข้อมูลจำลอง: ตัวเลขทั้งหมดมาจาก client/src/mocks</p>}
+
+      <header className="site-header wrap">
+        <a className="wordmark" href="/">
+          BKK TripFare
+        </a>
+        <nav aria-label="เมนูหลัก">
+          <a href="#plan">วางแผนเดินทาง</a>
+          {showMeetup && <a href="#meetup">นัดเพื่อน</a>}
+          <a href="#how">วิธีคิดราคา</a>
+          <a href="#data">ข้อมูลที่ใช้</a>
+        </nav>
       </header>
 
-      <nav className="tabs" aria-label="เมนูหลัก">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            className={t.id === tab ? 'tab active' : 'tab'}
-            aria-current={t.id === tab ? 'page' : undefined}
-            onClick={() => setTab(t.id)}
-          >
-            {t.label}
-          </button>
-        ))}
-      </nav>
-
       <main>
-        <Page />
+        <PlanTrip />
+        {showMeetup && <Meetup />}
+        <HowFares />
+        <DataInfo />
       </main>
 
-      <footer className="app-footer">ราคาที่แสดงเป็นราคาอ้างอิง อาจไม่ตรงกับราคาจริง</footer>
-    </div>
+      <footer className="site-footer wrap">
+        <p>BKK TripFare โปรเจกต์นักศึกษา ราคาที่แสดงเป็นราคาอ้างอิง ก่อนเดินทางควรเช็กกับผู้ให้บริการอีกครั้ง</p>
+        <a href="/admin">สำหรับผู้ดูแลระบบ</a>
+      </footer>
+    </>
   );
 }

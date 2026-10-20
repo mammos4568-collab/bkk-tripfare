@@ -1,275 +1,825 @@
-/* สไตล์พื้นฐาน — ส่วน B ปรับได้เต็มที่ */
+/*
+ * BKK TripFare — แนวทางการออกแบบเต็มอยู่ที่ docs/DESIGN.md
+ * หลัก: เส้นสายรถคือแกนของหน้า / ไม่มีการ์ด เงา หรือไล่สี / ตัวเลขเงินและเวลาใช้ Bai Jamjuree เสมอ
+ */
+
 :root {
-  --bg: #f6f7f9;
-  --surface: #ffffff;
-  --text: #1c1f24;
-  --muted: #5f6672;
-  --border: #dde1e7;
-  --accent: #0b6e4f;
-  --accent-contrast: #ffffff;
-  --warning-bg: #fff6db;
-  --warning-text: #6b4e00;
+  --ink: #1c2433;
+  --platform: #f3f5f4;
+  --field: #ffffff;
+  --muted: #5d6675;
+  --rule: #cbd2d6;
+  --signal: #ffc629;
+  --signal-strong: #f2b600;
+  --on-signal: #1c2433;
   --error: #b42318;
-  --success: #067647;
-  --radius: 12px;
-  font-family: 'Noto Sans Thai', 'Sarabun', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  color: var(--text);
-  background: var(--bg);
-  line-height: 1.55;
+  --success: #1f6f43;
+
+  --font-display: 'Bai Jamjuree', 'IBM Plex Sans Thai', 'Noto Sans Thai', sans-serif;
+  --font-body: 'IBM Plex Sans Thai', 'Noto Sans Thai', system-ui, sans-serif;
+
+  /* ระยะจากขอบซ้ายถึงช่องกรอก = ที่ว่างให้เส้นและหมุด */
+  --gutter: 38px;
+
+  color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #111418;
-    --surface: #1a1e24;
-    --text: #e8eaed;
-    --muted: #9aa3ae;
-    --border: #2c323b;
-    --accent: #3ccf9a;
-    --accent-contrast: #0b1f17;
-    --warning-bg: #3a2f10;
-    --warning-text: #f5d778;
-    --error: #ff8a80;
-    --success: #6ee7b7;
+    --ink: #e8ecef;
+    --platform: #161c28;
+    --field: #1e2634;
+    --muted: #a3acb8;
+    --rule: #364052;
+    --error: #ff9b8f;
+    --success: #7fd6a3;
+    color-scheme: dark;
   }
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--platform);
+  color: var(--ink);
+  font: 400 1.0625rem/1.7 var(--font-body);
+  -webkit-font-smoothing: antialiased;
 }
 
-.app {
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 16px;
-}
-
-.app-header h1 {
-  margin: 8px 0 0;
-  font-size: 1.6rem;
-}
-
-.tagline {
-  margin: 0 0 8px;
-  color: var(--muted);
-}
-
-.badge {
-  display: inline-block;
-  padding: 2px 10px;
-  border-radius: 999px;
-  background: var(--warning-bg);
-  color: var(--warning-text);
-  font-size: 0.8rem;
-}
-
-.tabs {
-  display: flex;
-  gap: 4px;
-  overflow-x: auto;
-  margin: 12px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.tab {
-  flex: none;
-  padding: 10px 14px;
-  border: 0;
-  border-bottom: 3px solid transparent;
-  background: none;
-  color: var(--muted);
-  font: inherit;
-  cursor: pointer;
-}
-
-.tab.active {
-  color: var(--text);
-  border-bottom-color: var(--accent);
-  font-weight: 600;
-}
-
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
-  margin-bottom: 16px;
-}
-
-.card h2 {
-  margin-top: 0;
-  font-size: 1.2rem;
-}
-
-label {
-  display: block;
-  margin: 12px 0 4px;
-  font-weight: 500;
-}
-
-select,
-input[type='number'],
-input[type='text'],
-input[type='email'],
-input[type='password'] {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--surface);
-  color: var(--text);
-  font: inherit;
-}
-
-.waypoints {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 8px;
-}
-
-.waypoints li {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.choice {
-  border: 0;
-  padding: 0;
-  margin: 16px 0;
-}
-
-.choice legend {
-  font-weight: 500;
-  margin-bottom: 4px;
-}
-
-.choice label {
-  display: inline-flex;
-  align-items: center;
-  margin: 4px 16px 4px 0;
-  font-weight: 400;
+a {
+  color: inherit;
+  text-underline-offset: 3px;
 }
 
 button {
-  font: inherit;
   cursor: pointer;
 }
 
-.primary {
+:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+h1,
+h2 {
+  text-wrap: balance;
+}
+
+.wrap {
+  --pad: 20px;
   width: 100%;
-  margin-top: 16px;
-  padding: 12px;
-  border: 0;
-  border-radius: 8px;
-  background: var(--accent);
-  color: var(--accent-contrast);
-  font-weight: 600;
+  max-width: 1160px;
+  margin-inline: auto;
+  padding-inline: var(--pad);
 }
 
-.primary:disabled {
-  opacity: 0.6;
-  cursor: progress;
+@media (min-width: 768px) {
+  .wrap {
+    --pad: 40px;
+  }
 }
 
-.link-btn {
-  margin-top: 8px;
+/* เส้นแบ่งตรงกับขอบเนื้อหาพอดี (ไม่ยื่นเข้าไปในระยะขอบ) */
+.site-header,
+.section,
+.site-footer {
+  position: relative;
+}
+
+.site-header::after,
+.section::before,
+.site-footer::before {
+  content: '';
+  position: absolute;
+  left: var(--pad, 0px);
+  right: var(--pad, 0px);
+  height: 1px;
+  background: var(--rule);
+}
+
+.site-header::after {
+  bottom: 0;
+}
+
+.section::before,
+.site-footer::before {
+  top: 0;
+}
+
+.admin .site-header::after {
+  left: 0;
+  right: 0;
+}
+
+/* ---------- ส่วนหัวและท้ายเว็บ ---------- */
+
+.mock-strip {
+  margin: 0;
+  padding: 6px 20px;
+  background: var(--signal);
+  color: var(--on-signal);
+  font-size: 0.875rem;
+}
+
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 32px;
+  padding-block: 22px;
+}
+
+.wordmark {
+  font: 700 1.375rem/1.2 var(--font-display);
+  letter-spacing: -0.01em;
+  text-decoration: none;
+}
+
+.site-header nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+}
+
+.site-header nav a {
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+@media (min-width: 768px) {
+  .site-header nav {
+    gap: 4px 28px;
+  }
+
+  .site-header nav a {
+    font-size: 0.9375rem;
+  }
+}
+
+.site-header nav a:hover {
+  color: var(--ink);
+  text-decoration: underline;
+}
+
+.site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 32px;
+  padding-block: 28px 48px;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.site-footer p {
+  margin: 0;
+  max-width: 46em;
+}
+
+/* ---------- ส่วนแรก: วางแผนเดินทาง ---------- */
+
+.hero {
+  display: grid;
+  gap: 56px;
+  padding-block: 48px 72px;
+}
+
+@media (min-width: 960px) {
+  .hero {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: 80px;
+    padding-block: 72px 104px;
+  }
+}
+
+.hero h1 {
+  margin: 0 0 20px;
+  font: 700 clamp(2.4rem, 1.7rem + 2.8vw, 3.75rem) / 1.2 var(--font-display);
+  letter-spacing: -0.015em;
+}
+
+.lede {
+  max-width: 32em;
+  margin: 0 0 40px;
+  color: var(--muted);
+  font-size: 1.125rem;
+}
+
+/* จุดที่จะไป: ช่องกรอกเรียงบนเส้นเดียวกับผลลัพธ์ */
+.stops {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stops > li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 0 16px var(--gutter);
+}
+
+/* เส้นเชื่อมไปจุดถัดไป (ช่องสูง 48 → กึ่งกลาง 24) */
+.stops > li::before {
+  content: '';
+  position: absolute;
+  left: 13px;
+  top: 24px;
+  bottom: -24px;
+  width: 2px;
+  background: var(--rule);
+}
+
+.stops > li:last-child::before {
+  display: none;
+}
+
+/* หมุด: ต้นทางโปร่ง ปลายทางทึบ จุดแวะเล็กกว่า */
+.stops > li::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  left: 6px;
+  top: 16px;
+  width: 16px;
+  height: 16px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--platform);
+}
+
+.stops > li:last-child::after {
+  background: var(--ink);
+}
+
+.stops > li:not(:first-child):not(:last-child)::after {
+  left: 8px;
+  top: 18px;
+  width: 12px;
+  height: 12px;
+}
+
+.stops.people > li::after,
+.stops.people > li:last-child::after {
+  background: var(--platform);
+}
+
+.stops ~ .go,
+.stops ~ .error,
+.stops ~ .radios,
+.stops ~ .add-stop {
+  margin-left: var(--gutter);
+}
+
+.stops ~ .go {
+  width: calc(100% - var(--gutter));
+}
+
+.field {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  height: 48px;
+  padding: 0 14px;
+  border: 1.5px solid var(--rule);
+  border-radius: 4px;
+  background-color: var(--field);
+  color: var(--ink);
+  font: 400 1rem var(--font-body);
+  appearance: none;
+}
+
+select.field {
+  padding-right: 44px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%238a93a0' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+}
+
+.field:hover {
+  border-color: var(--muted);
+}
+
+.field:focus-visible {
+  border-color: var(--ink);
+  outline-offset: 1px;
+}
+
+.text-btn {
   padding: 4px 0;
   border: 0;
   background: none;
-  color: var(--accent);
+  color: var(--ink);
+  font: 500 0.9375rem var(--font-body);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
-.icon-btn {
+.text-btn.quiet {
   flex: none;
-  width: 40px;
-  height: 40px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--surface);
   color: var(--muted);
 }
 
-.summary {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  text-align: center;
+.text-btn:hover {
+  text-decoration-thickness: 2px;
 }
 
-.summary .big {
+.go {
   display: block;
-  font-size: 1.3rem;
-  font-weight: 700;
+  width: 100%;
+  height: 52px;
+  margin-top: 28px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--signal);
+  color: var(--on-signal);
+  font: 600 1.0625rem var(--font-body);
 }
 
-.segment {
-  margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
+.go:hover {
+  background: var(--signal-strong);
 }
 
-.segment h3 {
+.go:disabled {
+  opacity: 0.65;
+  cursor: progress;
+}
+
+.go.secondary {
+  border: 1.5px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+}
+
+.go.secondary:hover {
+  background: var(--field);
+}
+
+.error {
+  margin: 14px 0 0;
+  color: var(--error);
+  font-weight: 500;
+}
+
+.success {
+  margin: 14px 0 0;
+  color: var(--success);
+  font-weight: 500;
+}
+
+/* ---------- ผลลัพธ์ ---------- */
+
+.hero-result {
+  min-width: 0;
+}
+
+.hero-result:focus {
+  outline: none;
+}
+
+.empty {
+  max-width: 30em;
+  padding: 4px 0 4px 20px;
+  border-left: 2px solid var(--rule);
+  color: var(--muted);
+}
+
+.empty p {
   margin: 0;
-  font-size: 1rem;
 }
 
-.legs {
-  margin: 8px 0 0;
-  padding-left: 20px;
-  display: grid;
-  gap: 10px;
+.empty .presets-title {
+  margin-top: 24px;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.presets {
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.presets .text-btn {
+  padding-block: 6px;
+  font-weight: 400;
+  text-align: left;
+  line-height: 1.5;
+}
+
+.choice-name {
+  margin: 0;
+  font: 600 1.25rem/1.4 var(--font-display);
+}
+
+.total {
+  margin: 2px 0 0;
+  font: 700 clamp(3rem, 2.4rem + 2vw, 4.25rem) / 1.1 var(--font-display);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.total small {
+  margin-left: 10px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.total-note {
+  margin: 6px 0 0;
+}
+
+/* แถบเวลา: ยาวตามนาที สีตามสาย ช่วงเดินเป็นจุด */
+.timebar {
+  display: flex;
+  gap: 3px;
+  height: 10px;
+  margin-top: 18px;
+}
+
+.timebar > span {
+  flex-basis: 0;
+  min-width: 6px;
+}
+
+.timebar .walk {
+  background: radial-gradient(circle, var(--muted) 1.6px, transparent 2px) center / 7px 10px repeat-x;
+}
+
+.timebar.thin {
+  height: 6px;
+  margin-top: 10px;
+}
+
+.timebar.thin .walk {
+  background-size: 6px 6px;
+}
+
+.others {
+  margin-top: 40px;
+}
+
+.others h3,
+.steps-title {
+  margin: 0 0 6px;
+  font: 600 1rem var(--font-body);
+}
+
+.other {
+  display: block;
+  width: 100%;
+  padding: 16px 0;
+  border: 0;
+  border-top: 1px solid var(--rule);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+.other:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+
+.other-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.other-name {
+  font: 600 1.0625rem var(--font-display);
+}
+
+.other-go {
+  flex: none;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.other:hover .other-go {
+  text-decoration-thickness: 2px;
+}
+
+.other-diff {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+}
+
+.other:hover .other-diff {
+  color: var(--ink);
+}
+
+.note {
+  margin: 28px 0 0;
+  padding: 2px 0 2px 14px;
+  border-left: 4px solid var(--signal);
+  font-size: 0.9375rem;
+}
+
+.steps-title {
+  margin-top: 44px;
+  margin-bottom: 14px;
+}
+
+/* ขั้นตอนการเดินทาง: เส้นสายรถแนวตั้ง (กึ่งกลางเส้นอยู่ที่ x = 15px) */
+.route-line {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.route-line > li {
+  position: relative;
+  padding-left: 40px;
+}
+
+.route-line .stop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 34px;
+}
+
+.route-line .stop::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  left: 9px;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  margin-top: -6px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--platform);
+}
+
+.route-line .stop.waypoint::after {
+  left: 6px;
+  width: 18px;
+  height: 18px;
+  margin-top: -9px;
+  border-width: 4px;
+}
+
+.route-line .stop.end::after {
+  background: var(--ink);
+}
+
+.route-line .waypoint .stop-name {
+  font-weight: 600;
+}
+
+.route-line .stop:not(.waypoint) .stop-name {
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+.spent {
+  flex: none;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+.spent b {
+  color: var(--ink);
+  font: 600 1.0625rem var(--font-display);
+}
+
+.route-line .leg {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 12px;
+}
+
+/* เส้นยื่นเข้าไปครึ่งหนึ่งของแถวจุด (34 / 2) เพื่อให้ต่อกันไม่ขาด */
+.route-line .leg::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: -17px;
+  bottom: -17px;
+  width: 8px;
+  background: var(--line, var(--muted));
+}
+
+.route-line .leg.walk::before {
+  left: 13px;
+  width: 4px;
+  background: radial-gradient(circle, var(--muted) 1.6px, transparent 2px) center top / 4px 8px repeat-y;
+}
+
+.leg-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .leg-title {
   font-weight: 600;
 }
 
-.plain-list {
-  padding-left: 20px;
+.leg.walk .leg-title {
+  color: var(--muted);
+  font-weight: 400;
 }
+
+.leg-detail {
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+/* ราคาเป็นตั๋วกระดาษแบบตั๋วรถเมล์ (มีรอยบากสองข้าง) */
+.stub {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 58px;
+  height: 36px;
+  padding: 0 14px;
+  background: var(--stub-bg);
+  color: var(--stub-fg);
+  font: 700 1.1875rem/1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  -webkit-mask:
+    radial-gradient(circle 6px at 0 50%, #0000 97%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle 6px at 100% 50%, #0000 97%, #000) right / 51% 100% no-repeat;
+  mask:
+    radial-gradient(circle 6px at 0 50%, #0000 97%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle 6px at 100% 50%, #0000 97%, #000) right / 51% 100% no-repeat;
+}
+
+.stub-none {
+  flex: none;
+  max-width: 8.5em;
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  text-align: right;
+}
+
+.fineprint {
+  margin: 28px 0 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+/* ---------- ส่วนอธิบายด้านล่าง ---------- */
+
+.section {
+  display: grid;
+  gap: 16px 80px;
+  padding-block: 64px;
+}
+
+@media (min-width: 960px) {
+  .section {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    padding-block: 88px;
+  }
+}
+
+.section > h2 {
+  margin: 0;
+  font: 600 clamp(1.6rem, 1.3rem + 1.2vw, 2.25rem) / 1.3 var(--font-display);
+  letter-spacing: -0.01em;
+}
+
+.section-body {
+  min-width: 0;
+  max-width: 36em;
+}
+
+.section-body > h3 {
+  margin: 28px 0 4px;
+  font: 600 1.0625rem var(--font-body);
+}
+
+.section-body > h3:first-child {
+  margin-top: 0;
+}
+
+.section-body > p {
+  margin: 0 0 16px;
+}
+
+.section-body > h3 + p {
+  color: var(--muted);
+}
+
+.narrow {
+  max-width: 30rem;
+}
+
+.radios {
+  margin: 24px 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.radios legend {
+  margin-bottom: 6px;
+  padding: 0;
+  font-weight: 600;
+}
+
+.radios label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+}
+
+.radios input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--ink);
+}
+
+.meetup-result {
+  margin-top: 40px;
+}
+
+.people-fares {
+  max-width: 30rem;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.people-fares li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-top: 1px solid var(--rule);
+}
+
+.people-fares b {
+  font: 600 1.0625rem var(--font-display);
+}
+
+.report {
+  margin-top: 36px;
+}
+
+.report h3 {
+  margin: 0 0 4px;
+  font: 600 1.0625rem var(--font-body);
+}
+
+.report label,
+.admin-login label {
+  display: block;
+  margin: 16px 0 6px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+/* ---------- ระบบแอดมิน ---------- */
+
+.admin-login {
+  padding-block: 56px 96px;
+}
+
+.admin-login h1 {
+  margin: 0 0 8px;
+  font: 600 2rem/1.3 var(--font-display);
+}
+
+/* ---------- อื่น ๆ ---------- */
 
 .muted {
   color: var(--muted);
 }
 
-.small {
-  font-size: 0.85rem;
-}
-
-.warning {
-  margin: 12px 0 0;
-  padding: 8px 12px;
-  border-radius: 8px;
-  background: var(--warning-bg);
-  color: var(--warning-text);
-}
-
-.error {
-  color: var(--error);
-  margin: 12px 0 0;
-}
-
-.success {
-  color: var(--success);
-  margin: 12px 0 0;
-}
-
-.app-footer {
-  margin: 24px 0;
-  color: var(--muted);
-  font-size: 0.85rem;
-  text-align: center;
-}
-
-/* ซ่อนจากตาแต่โปรแกรมอ่านหน้าจอยังอ่านได้ */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -286,4 +836,10 @@ button {
   width: 1px;
   height: 1px;
   overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }

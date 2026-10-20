@@ -1,32 +1,31 @@
 /**
- * ส่วน D — หน้าแอดมิน: ตรวจรีพอร์ต + log ความปลอดภัย
- * สัญญา: docs/API.md หัวข้อ "แอดมิน"
+ * ระบบแอดมิน (เพื่อน)
+ * สัญญา: docs/API.md หัวข้อ "เข้าสู่ระบบและแอดมิน"
  *
- * TODO (ส่วน D):
+ * TODO (เพื่อน):
  *  - ทุก route ใช้ requireAdmin (src/middleware/requireAuth.js)
- *  - GET /reports?status=pending → จัดกลุ่มตาม (line_id, type, proposed_fare)
- *    นับผู้แจ้งที่ต่างกันจริง: COUNT(DISTINCT user_id) และ COUNT(DISTINCT ip_hash)
- *    เสนอให้อนุมัติเมื่อ ≥ 3 คน, บัญชีอายุ ≥ 1 วัน, ราคาอยู่ในช่วงสมเหตุสมผล
- *  - POST /reports/:id/approve → status 'approved', reviewed_by, reviewed_at, trust_score ผู้แจ้ง +1
- *  - POST /reports/:id/reject  → status 'rejected', trust_score ผู้แจ้ง -1, บันทึก security_events
- *  - GET /security-events → 100 รายการล่าสุด (ไว้ทำ dashboard แบบ SOC)
+ *  - (ต้องมี) GET /security-events → 100 รายการล่าสุดจากตาราง security_events (ใหม่สุดก่อน)
+ *  - (ถ้ามีเวลา) GET /reports?status=pending → จัดกลุ่มตาม (line_id, type, proposed_fare)
+ *    นับคนแจ้งที่ต่างกันจริงด้วย COUNT(DISTINCT ip_hash)
+ *  - (ถ้ามีเวลา) POST /reports/:id/approve | reject → เปลี่ยน status, reviewed_by, reviewed_at
+ *    อนุมัติแล้ว: คนหลักแก้ data/fares.json ผ่าน PR โดยใส่เลขรีพอร์ตใน source
  */
 import { Router } from 'express';
 import { notImplemented } from '../errors.js';
 
 export function adminRouter() {
   const router = Router();
+  router.get('/security-events', () => {
+    throw notImplemented('แอดมิน', 'log ความปลอดภัย');
+  });
   router.get('/reports', () => {
-    throw notImplemented('D', 'ตรวจรีพอร์ต');
+    throw notImplemented('แอดมิน', 'ตรวจรายการแจ้งราคา');
   });
   router.post('/reports/:id/approve', () => {
-    throw notImplemented('D', 'อนุมัติรีพอร์ต');
+    throw notImplemented('แอดมิน', 'อนุมัติรายการแจ้งราคา');
   });
   router.post('/reports/:id/reject', () => {
-    throw notImplemented('D', 'ปฏิเสธรีพอร์ต');
-  });
-  router.get('/security-events', () => {
-    throw notImplemented('D', 'log ความปลอดภัย');
+    throw notImplemented('แอดมิน', 'ปฏิเสธรายการแจ้งราคา');
   });
   return router;
 }

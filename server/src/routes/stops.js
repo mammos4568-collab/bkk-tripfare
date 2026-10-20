@@ -1,5 +1,5 @@
 /**
- * ส่วน A — ค้นหาจุด และรายชื่อสาย
+ * ค้นหาจุด และรายชื่อสาย (คนหลัก)
  * สัญญา: docs/API.md หัวข้อ GET /api/stops, GET /api/lines
  */
 import { Router } from 'express';

@@ -2,7 +2,7 @@ import pg from 'pg';
 import { config } from './config.js';
 
 /**
- * การเชื่อมต่อ PostgreSQL (ส่วน C, D ใช้)
+ * การเชื่อมต่อ PostgreSQL (ระบบแอดมินใช้)
  * เปิด DB ในเครื่อง: `docker compose up -d` ที่โฟลเดอร์บนสุด
  *
  * ใช้ parameter เสมอ ห้ามต่อ string เอง (กัน SQL injection):

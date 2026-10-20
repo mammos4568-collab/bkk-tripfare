@@ -4,16 +4,36 @@ import { priceLegs } from './fare.js';
 import { buildGraph, stopNode } from './graph.js';
 
 export const MAX_WAYPOINTS = 6;
+export const OPTIMIZE_MODES = ['fastest', 'cheapest', 'fewest_transfers'];
 
-/** เกณฑ์การหาเส้นทาง = น้ำหนักของแต่ละ edge */
-const COST_FUNCTIONS = {
+/**
+ * น้ำหนักของ edge ตอนค้นหา (Dijkstra) — หนึ่งแบบต่อหนึ่งเกณฑ์
+ * แต่ละแบบให้ "เส้นทางผู้ท้าชิง" มาหนึ่งเส้น แล้วค่อยคิดราคาจริงเพื่อเลือก (ดู CRITERIA)
+ */
+const SEARCH_COSTS = {
   fastest: (edge) => edge.minutes,
-  // ใช้ราคาโดยประมาณเป็นหลัก ถ้าราคาเท่ากันให้เลือกทางที่เร็วกว่า
+  // ราคาโดยประมาณ (ค่าแรกเข้า + ต่อจุด) ถ้าเท่ากันเลือกทางที่เร็วกว่า
   cheapest: (edge) => edge.approxFare + edge.minutes * 0.001,
+  // ขึ้นรถแต่ละครั้งแพงมาก → ได้เส้นทางที่ขึ้นรถน้อยที่สุด แล้วค่อยดูเวลา
+  fewest_transfers: (edge) => (edge.kind === 'board' ? 1000 : 0) + edge.minutes,
+};
+
+/** เกณฑ์เลือกเส้นทางจากค่าจริง (เวลา ราคาจริง จำนวนต่อรถ) — ใช้ได้ทั้งกับ 1 ช่วง และทั้งทริป */
+const CRITERIA = {
+  fastest: (a, b) => a.minutes - b.minutes || a.fare - b.fare,
+  cheapest: (a, b) => a.fare - b.fare || a.minutes - b.minutes,
+  fewest_transfers: (a, b) => a.transfers - b.transfers || a.minutes - b.minutes,
 };
 
 const round2 = (n) => Math.round(n * 100) / 100;
 const sum = (items, key) => items.reduce((total, item) => total + (item[key] ?? 0), 0);
+const pickBest = (items, compare) => items.reduce((best, item) => (compare(item, best) < 0 ? item : best));
+
+/** ลายเซ็นของเส้นทาง ใช้ตัดเส้นทางที่ซ้ำกัน */
+const segmentSignature = (segment) =>
+  segment.legs
+    .map((l) => (l.type === 'ride' ? `${l.line_id}:${l.from_stop}>${l.to_stop}` : `walk:${l.from_stop}>${l.to_stop}`))
+    .join(',');
 
 /**
  * สร้างตัววางแผนการเดินทางจากข้อมูลใน data/
@@ -79,6 +99,7 @@ export function createPlanner(data) {
       type: 'ride',
       line_id: line.id,
       line_name: line.name_th,
+      line_color: line.color ?? null,
       mode: line.mode,
       from_stop: ride.fromStop,
       from_name: stopName(ride.fromStop),
@@ -91,33 +112,13 @@ export function createPlanner(data) {
     };
   }
 
-  /** หาเส้นทาง 1 ช่วง (จุด → จุด) */
-  function planSegment(from, to, optimize = 'fastest') {
-    const costFn = COST_FUNCTIONS[optimize];
-    if (!costFn) {
-      throw new AppError(400, 'INVALID_INPUT', `optimize ต้องเป็น ${Object.keys(COST_FUNCTIONS).join(' หรือ ')}`);
+  function checkOptimize(optimize) {
+    if (!OPTIMIZE_MODES.includes(optimize)) {
+      throw new AppError(400, 'INVALID_INPUT', `optimize ต้องเป็น ${OPTIMIZE_MODES.join(' / ')}`);
     }
-    for (const id of [from, to]) {
-      if (!stopsById.has(id)) throw new AppError(404, 'STOP_NOT_FOUND', `ไม่พบจุด "${id}"`);
-    }
-
-    const result = dijkstra(graph, stopNode(from), stopNode(to), costFn);
-    if (!result) {
-      throw new AppError(422, 'NO_ROUTE', `ไม่พบเส้นทางจาก ${stopName(from)} ไป ${stopName(to)}`);
-    }
-
-    const legs = priceLegs(toLegs(result.edges), { linesById, rulesById, policies });
-    return {
-      from,
-      to,
-      minutes: sum(legs, 'minutes'),
-      fare: round2(sum(legs, 'fare')),
-      legs,
-    };
   }
 
-  /** หาเส้นทางผ่านหลายจุดตามลำดับ = ต่อเส้นทางทีละช่วง */
-  function planTrip(waypoints, optimize = 'fastest') {
+  function checkWaypoints(waypoints) {
     if (!Array.isArray(waypoints) || waypoints.length < 2 || waypoints.length > MAX_WAYPOINTS) {
       throw new AppError(400, 'INVALID_INPUT', `ต้องมีจุด 2–${MAX_WAYPOINTS} จุด`);
     }
@@ -128,28 +129,105 @@ export function createPlanner(data) {
         ]);
       }
     }
-
-    const segments = [];
-    for (let i = 0; i + 1 < waypoints.length; i += 1) {
-      segments.push(planSegment(waypoints[i], waypoints[i + 1], optimize));
+    for (const id of waypoints) {
+      if (!stopsById.has(id)) throw new AppError(404, 'STOP_NOT_FOUND', `ไม่พบจุด "${id}"`);
     }
+  }
 
-    const rideCount = segments.reduce((n, seg) => n + seg.legs.filter((l) => l.type === 'ride').length, 0);
-    const segmentsWithRide = segments.filter((seg) => seg.legs.some((l) => l.type === 'ride')).length;
+  /**
+   * หาเส้นทางผู้ท้าชิงของ 1 ช่วง (จุด → จุด): ค้นหาด้วยทุกเกณฑ์ แล้วคิดราคาจริงทุกเส้น
+   * @returns {object[]} เส้นทางที่ไม่ซ้ำกัน 1–3 เส้น
+   */
+  function segmentCandidates(from, to) {
+    for (const id of [from, to]) {
+      if (!stopsById.has(id)) throw new AppError(404, 'STOP_NOT_FOUND', `ไม่พบจุด "${id}"`);
+    }
+    const unique = new Map();
+    for (const mode of OPTIMIZE_MODES) {
+      const result = dijkstra(graph, stopNode(from), stopNode(to), SEARCH_COSTS[mode]);
+      if (!result) {
+        throw new AppError(422, 'NO_ROUTE', `ไม่พบเส้นทางจาก ${stopName(from)} ไป ${stopName(to)}`);
+      }
+      const legs = priceLegs(toLegs(result.edges), { linesById, rulesById, policies });
+      const rides = legs.filter((l) => l.type === 'ride').length;
+      const segment = {
+        from,
+        to,
+        minutes: sum(legs, 'minutes'),
+        fare: round2(sum(legs, 'fare')),
+        transfers: Math.max(0, rides - 1),
+        legs,
+      };
+      const signature = segmentSignature(segment);
+      if (!unique.has(signature)) unique.set(signature, segment);
+    }
+    return [...unique.values()];
+  }
 
-    const warnings = [];
-    if (sampleData) warnings.push('ราคาคำนวณจากข้อมูลตัวอย่าง ไม่ใช่ราคาจริง');
+  /** หาเส้นทาง 1 ช่วงตามเกณฑ์ที่เลือก */
+  function planSegment(from, to, optimize = 'fastest') {
+    checkOptimize(optimize);
+    return pickBest(segmentCandidates(from, to), CRITERIA[optimize]);
+  }
 
+  function buildTrip(segments) {
     return {
-      optimize,
       segments,
       total: {
         minutes: sum(segments, 'minutes'),
         fare: round2(sum(segments, 'fare')),
-        transfers: Math.max(0, rideCount - segmentsWithRide),
+        transfers: sum(segments, 'transfers'),
       },
-      warnings,
-      data_checked_at: dataCheckedAt,
+    };
+  }
+
+  function tripMeta() {
+    const warnings = [];
+    if (sampleData) warnings.push('ราคาคำนวณจากข้อมูลตัวอย่าง ไม่ใช่ราคาจริง');
+    return { warnings, data_checked_at: dataCheckedAt };
+  }
+
+  /** หาเส้นทางผ่านหลายจุดตามลำดับ = เลือกเส้นทางที่ดีที่สุดของแต่ละช่วงแล้วต่อกัน */
+  function planTrip(waypoints, optimize = 'fastest') {
+    checkWaypoints(waypoints);
+    checkOptimize(optimize);
+    const segments = [];
+    for (let i = 0; i + 1 < waypoints.length; i += 1) {
+      segments.push(planSegment(waypoints[i], waypoints[i + 1], optimize));
+    }
+    return { optimize, ...buildTrip(segments), ...tripMeta() };
+  }
+
+  /**
+   * ทางเลือกทั้งทริปสำหรับหน้าเปรียบเทียบ (ถูกที่สุด / เร็วที่สุด / ต่อรถน้อยที่สุด)
+   * แต่ละช่วงคิดแยกกันได้ → ทริปที่ดีที่สุดตามเกณฑ์ = เลือกช่วงที่ดีที่สุดตามเกณฑ์นั้นทุกช่วง
+   */
+  function planOptions(waypoints) {
+    checkWaypoints(waypoints);
+    const candidates = [];
+    for (let i = 0; i + 1 < waypoints.length; i += 1) {
+      candidates.push(segmentCandidates(waypoints[i], waypoints[i + 1]));
+    }
+
+    const unique = new Map();
+    for (const mode of OPTIMIZE_MODES) {
+      const trip = buildTrip(candidates.map((list) => pickBest(list, CRITERIA[mode])));
+      const signature = trip.segments.map(segmentSignature).join('|');
+      if (!unique.has(signature)) unique.set(signature, trip);
+    }
+
+    const options = [...unique.values()].sort((a, b) => CRITERIA.cheapest(a.total, b.total));
+    const best = {};
+    for (const mode of OPTIMIZE_MODES) {
+      best[mode] = options.indexOf(pickBest(options, (a, b) => CRITERIA[mode](a.total, b.total)));
+    }
+    return {
+      options: options.map((option, i) => ({
+        labels: OPTIMIZE_MODES.filter((mode) => best[mode] === i),
+        ...option,
+      })),
+      best,
+      ...tripMeta(),
     };
   }
 
@@ -185,5 +263,5 @@ export function createPlanner(data) {
     };
   }
 
-  return { planSegment, planTrip, searchStops, listLines, info, stopsById, linesById };
+  return { planSegment, planTrip, planOptions, searchStops, listLines, info, stopsById, linesById };
 }

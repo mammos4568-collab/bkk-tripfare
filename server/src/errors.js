@@ -18,6 +18,6 @@ export class AppError extends Error {
 }
 
 /** ใช้ในส่วนที่ยังไม่ได้ทำ → ตอบ 501 */
-export function notImplemented(part, feature) {
-  return new AppError(501, 'NOT_IMPLEMENTED', `${feature} ยังไม่ได้ทำ (ส่วน ${part})`);
+export function notImplemented(owner, feature) {
+  return new AppError(501, 'NOT_IMPLEMENTED', `${feature} ยังไม่ได้ทำ (ส่วน${owner})`);
 }

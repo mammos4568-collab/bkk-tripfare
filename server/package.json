@@ -11,7 +11,8 @@
     "start": "node src/index.js",
     "test": "node --test",
     "validate-data": "node scripts/validate-data.js",
-    "validate-data:strict": "node scripts/validate-data.js --strict"
+    "validate-data:strict": "node scripts/validate-data.js --strict",
+    "create-admin": "node scripts/create-admin.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",

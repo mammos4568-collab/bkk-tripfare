@@ -1,0 +1,301 @@
+{
+  "options": [
+    {
+      "labels": [
+        "cheapest",
+        "fewest_transfers"
+      ],
+      "segments": [
+        {
+          "from": "SMP-A1",
+          "to": "SMP-P2",
+          "minutes": 37,
+          "fare": 24,
+          "transfers": 1,
+          "legs": [
+            {
+              "type": "walk",
+              "from_stop": "SMP-A1",
+              "from_name": "[ตัวอย่าง] ต้นสายแดง",
+              "to_stop": "SMP-U1",
+              "to_name": "[ตัวอย่าง] ป้ายรถเมล์หน้าต้นสายแดง",
+              "minutes": 3
+            },
+            {
+              "type": "ride",
+              "line_id": "SMP-BUS1",
+              "line_name": "[ตัวอย่าง] รถเมล์สาย 1 สมมติ",
+              "line_color": null,
+              "mode": "bus",
+              "from_stop": "SMP-U1",
+              "from_name": "[ตัวอย่าง] ป้ายรถเมล์หน้าต้นสายแดง",
+              "to_stop": "SMP-U3",
+              "to_name": "[ตัวอย่าง] ป้ายรถเมล์หน้าท่าเรือปลายน้ำ",
+              "num_stops": 2,
+              "wait_minutes": 6,
+              "ride_minutes": 10,
+              "minutes": 16,
+              "fare": 8,
+              "fare_included_in_previous": false
+            },
+            {
+              "type": "walk",
+              "from_stop": "SMP-U3",
+              "from_name": "[ตัวอย่าง] ป้ายรถเมล์หน้าท่าเรือปลายน้ำ",
+              "to_stop": "SMP-P3",
+              "to_name": "[ตัวอย่าง] ท่าเรือปลายน้ำ",
+              "minutes": 4
+            },
+            {
+              "type": "ride",
+              "line_id": "SMP-BOAT",
+              "line_name": "[ตัวอย่าง] เรือด่วนสมมติ",
+              "line_color": "#E07A12",
+              "mode": "boat",
+              "from_stop": "SMP-P3",
+              "from_name": "[ตัวอย่าง] ท่าเรือปลายน้ำ",
+              "to_stop": "SMP-P2",
+              "to_name": "[ตัวอย่าง] ท่าเรือวัด",
+              "num_stops": 1,
+              "wait_minutes": 8,
+              "ride_minutes": 6,
+              "minutes": 14,
+              "fare": 16,
+              "fare_included_in_previous": false
+            }
+          ]
+        },
+        {
+          "from": "SMP-P2",
+          "to": "SMP-A4",
+          "minutes": 34,
+          "fare": 41,
+          "transfers": 2,
+          "legs": [
+            {
+              "type": "ride",
+              "line_id": "SMP-BOAT",
+              "line_name": "[ตัวอย่าง] เรือด่วนสมมติ",
+              "line_color": "#E07A12",
+              "mode": "boat",
+              "from_stop": "SMP-P2",
+              "from_name": "[ตัวอย่าง] ท่าเรือวัด",
+              "to_stop": "SMP-P1",
+              "to_name": "[ตัวอย่าง] ท่าเรือริมน้ำ",
+              "num_stops": 1,
+              "wait_minutes": 8,
+              "ride_minutes": 6,
+              "minutes": 14,
+              "fare": 16,
+              "fare_included_in_previous": false
+            },
+            {
+              "type": "walk",
+              "from_stop": "SMP-P1",
+              "from_name": "[ตัวอย่าง] ท่าเรือริมน้ำ",
+              "to_stop": "SMP-B2",
+              "to_name": "[ตัวอย่าง] ริมน้ำ",
+              "minutes": 5
+            },
+            {
+              "type": "ride",
+              "line_id": "SMP-SKY",
+              "line_name": "[ตัวอย่าง] สายสีฟ้าสมมติ",
+              "line_color": "#2AA4D6",
+              "mode": "rail",
+              "from_stop": "SMP-B2",
+              "from_name": "[ตัวอย่าง] ริมน้ำ",
+              "to_stop": "SMP-C0",
+              "to_name": "[ตัวอย่าง] ชุมทางกลาง",
+              "num_stops": 1,
+              "wait_minutes": 4,
+              "ride_minutes": 3,
+              "minutes": 7,
+              "fare": 25,
+              "fare_included_in_previous": false
+            },
+            {
+              "type": "ride",
+              "line_id": "SMP-RED",
+              "line_name": "[ตัวอย่าง] สายสีแดงสมมติ",
+              "line_color": "#C8102E",
+              "mode": "rail",
+              "from_stop": "SMP-C0",
+              "from_name": "[ตัวอย่าง] ชุมทางกลาง",
+              "to_stop": "SMP-A4",
+              "to_name": "[ตัวอย่าง] ปลายสายแดง",
+              "num_stops": 2,
+              "wait_minutes": 3,
+              "ride_minutes": 5,
+              "minutes": 8,
+              "fare": 0,
+              "fare_included_in_previous": true
+            }
+          ]
+        }
+      ],
+      "total": {
+        "minutes": 71,
+        "fare": 65,
+        "transfers": 3
+      }
+    },
+    {
+      "labels": [
+        "fastest"
+      ],
+      "segments": [
+        {
+          "from": "SMP-A1",
+          "to": "SMP-P2",
+          "minutes": 34,
+          "fare": 41,
+          "transfers": 2,
+          "legs": [
+            {
+              "type": "ride",
+              "line_id": "SMP-RED",
+              "line_name": "[ตัวอย่าง] สายสีแดงสมมติ",
+              "line_color": "#C8102E",
+              "mode": "rail",
+              "from_stop": "SMP-A1",
+              "from_name": "[ตัวอย่าง] ต้นสายแดง",
+              "to_stop": "SMP-C0",
+              "to_name": "[ตัวอย่าง] ชุมทางกลาง",
+              "num_stops": 2,
+              "wait_minutes": 3,
+              "ride_minutes": 5,
+              "minutes": 8,
+              "fare": 25,
+              "fare_included_in_previous": false
+            },
+            {
+              "type": "ride",
+              "line_id": "SMP-SKY",
+              "line_name": "[ตัวอย่าง] สายสีฟ้าสมมติ",
+              "line_color": "#2AA4D6",
+              "mode": "rail",
+              "from_stop": "SMP-C0",
+              "from_name": "[ตัวอย่าง] ชุมทางกลาง",
+              "to_stop": "SMP-B2",
+              "to_name": "[ตัวอย่าง] ริมน้ำ",
+              "num_stops": 1,
+              "wait_minutes": 4,
+              "ride_minutes": 3,
+              "minutes": 7,
+              "fare": 0,
+              "fare_included_in_previous": true
+            },
+            {
+              "type": "walk",
+              "from_stop": "SMP-B2",
+              "from_name": "[ตัวอย่าง] ริมน้ำ",
+              "to_stop": "SMP-P1",
+              "to_name": "[ตัวอย่าง] ท่าเรือริมน้ำ",
+              "minutes": 5
+            },
+            {
+              "type": "ride",
+              "line_id": "SMP-BOAT",
+              "line_name": "[ตัวอย่าง] เรือด่วนสมมติ",
+              "line_color": "#E07A12",
+              "mode": "boat",
+              "from_stop": "SMP-P1",
+              "from_name": "[ตัวอย่าง] ท่าเรือริมน้ำ",
+              "to_stop": "SMP-P2",
+              "to_name": "[ตัวอย่าง] ท่าเรือวัด",
+              "num_stops": 1,
+              "wait_minutes": 8,
+              "ride_minutes": 6,
+              "minutes": 14,
+              "fare": 16,
+              "fare_included_in_previous": false
+            }
+          ]
+        },
+        {
+          "from": "SMP-P2",
+          "to": "SMP-A4",
+          "minutes": 34,
+          "fare": 41,
+          "transfers": 2,
+          "legs": [
+            {
+              "type": "ride",
+              "line_id": "SMP-BOAT",
+              "line_name": "[ตัวอย่าง] เรือด่วนสมมติ",
+              "line_color": "#E07A12",
+              "mode": "boat",
+              "from_stop": "SMP-P2",
+              "from_name": "[ตัวอย่าง] ท่าเรือวัด",
+              "to_stop": "SMP-P1",
+              "to_name": "[ตัวอย่าง] ท่าเรือริมน้ำ",
+              "num_stops": 1,
+              "wait_minutes": 8,
+              "ride_minutes": 6,
+              "minutes": 14,
+              "fare": 16,
+              "fare_included_in_previous": false
+            },
+            {
+              "type": "walk",
+              "from_stop": "SMP-P1",
+              "from_name": "[ตัวอย่าง] ท่าเรือริมน้ำ",
+              "to_stop": "SMP-B2",
+              "to_name": "[ตัวอย่าง] ริมน้ำ",
+              "minutes": 5
+            },
+            {
+              "type": "ride",
+              "line_id": "SMP-SKY",
+              "line_name": "[ตัวอย่าง] สายสีฟ้าสมมติ",
+              "line_color": "#2AA4D6",
+              "mode": "rail",
+              "from_stop": "SMP-B2",
+              "from_name": "[ตัวอย่าง] ริมน้ำ",
+              "to_stop": "SMP-C0",
+              "to_name": "[ตัวอย่าง] ชุมทางกลาง",
+              "num_stops": 1,
+              "wait_minutes": 4,
+              "ride_minutes": 3,
+              "minutes": 7,
+              "fare": 25,
+              "fare_included_in_previous": false
+            },
+            {
+              "type": "ride",
+              "line_id": "SMP-RED",
+              "line_name": "[ตัวอย่าง] สายสีแดงสมมติ",
+              "line_color": "#C8102E",
+              "mode": "rail",
+              "from_stop": "SMP-C0",
+              "from_name": "[ตัวอย่าง] ชุมทางกลาง",
+              "to_stop": "SMP-A4",
+              "to_name": "[ตัวอย่าง] ปลายสายแดง",
+              "num_stops": 2,
+              "wait_minutes": 3,
+              "ride_minutes": 5,
+              "minutes": 8,
+              "fare": 0,
+              "fare_included_in_previous": true
+            }
+          ]
+        }
+      ],
+      "total": {
+        "minutes": 68,
+        "fare": 82,
+        "transfers": 4
+      }
+    }
+  ],
+  "best": {
+    "fastest": 1,
+    "cheapest": 0,
+    "fewest_transfers": 0
+  },
+  "warnings": [
+    "ราคาคำนวณจากข้อมูลตัวอย่าง ไม่ใช่ราคาจริง"
+  ],
+  "data_checked_at": "2026-10-20"
+}

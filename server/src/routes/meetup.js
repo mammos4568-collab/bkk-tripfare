@@ -1,8 +1,8 @@
 /**
- * ส่วน D — นัดเจอกลุ่ม
+ * นัดเจอกลุ่ม (คนหลัก — ทำถ้ามีเวลา) ทำเสร็จแล้วเปิด meetup: true ใน client/src/features.js
  * สัญญา: docs/API.md หัวข้อ POST /api/meetup
  *
- * TODO (ส่วน D) — ไม่ต้องเขียน Dijkstra ใหม่ ใช้ planner.planSegment() ได้เลย:
+ * TODO — ไม่ต้องเขียน Dijkstra ใหม่ ใช้ planner.planSegment() ได้เลย:
  *  1. validate body ด้วย zod: origins 2–6 จุด, strategy = min_total | min_max, optimize = cheapest | fastest
  *  2. เลือกจุดนัดที่เป็นไปได้ (candidates) เช่น จุดที่มีสายผ่าน ≥ 2 สาย (planner.searchStops() คืน lines มาด้วย)
  *     จำกัดไม่เกิน ~50 จุด เพราะต้องคำนวณ = จำนวนคน × จำนวน candidate ครั้ง
@@ -16,11 +16,11 @@
 import { Router } from 'express';
 import { notImplemented } from '../errors.js';
 
-// planner ส่งเข้ามาให้แล้ว (ส่วน D ใช้ planner.planSegment / planner.searchStops)
+// planner ส่งเข้ามาให้แล้ว (ใช้ planner.planSegment / planner.searchStops)
 export function meetupRouter(planner) {
   const router = Router();
   router.post('/', () => {
-    throw notImplemented('D', 'นัดเจอกลุ่ม');
+    throw notImplemented('หลัก', 'นัดเจอกลุ่ม');
   });
   return router;
 }

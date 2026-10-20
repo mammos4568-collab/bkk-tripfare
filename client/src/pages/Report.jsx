@@ -1,11 +1,10 @@
 /**
- * ส่วน D — หน้าแจ้งข้อมูลผิด
- * API: submitReport() ใน src/api.js (server ยังตอบ 501 จนกว่าส่วน D จะทำ routes/reports.js)
+ * แจ้งราคาไม่ตรง (เพื่อน — ทำถ้ามีเวลา, แอดมินเป็นคนตรวจ)
+ * API: submitReport() ใน src/api.js — server ยังตอบ 501 จนกว่าจะทำ server/src/routes/reports.js
+ * เปิดใช้ในเว็บจริงด้วย src/features.js (report: true)
  *
- * ออกแบบให้ไม่มีช่องพิมพ์อิสระ (ตั้งใจ) → ไม่ต้องกรองคำหยาบ ไม่มีที่ให้ใส่ลิงก์สแปม
+ * ไม่มีช่องพิมพ์อิสระ (ตั้งใจ) → ไม่ต้องกรองคำหยาบ ไม่มีที่ให้ใส่ลิงก์สแปม
  * ช่อง "website" คือ honeypot: ซ่อนจากคน แต่บอตจะกรอก → server ทิ้งรีพอร์ตนั้น
- *
- * TODO (ส่วน D): ต้องล็อกอินก่อนแจ้ง (รอส่วน C), แสดงข้อความเมื่อโดน rate limit (429)
  */
 import { useEffect, useState } from 'react';
 import { getLines, getStops, submitReport } from '../api.js';
@@ -13,8 +12,8 @@ import StopSelect from '../components/StopSelect.jsx';
 
 const TYPES = [
   { value: 'fare_wrong', label: 'ราคาไม่ตรง' },
-  { value: 'stop_moved', label: 'ป้าย/จุดจอดย้าย' },
-  { value: 'line_cancelled', label: 'สายนี้ยกเลิกแล้ว' },
+  { value: 'stop_moved', label: 'ป้ายหรือจุดจอดย้าย' },
+  { value: 'line_cancelled', label: 'สายนี้ไม่วิ่งแล้ว' },
 ];
 
 export default function Report() {
@@ -39,9 +38,9 @@ export default function Report() {
     event.preventDefault();
     setError('');
     setMessage('');
-    if (!form.line_id) return setError('กรุณาเลือกสาย');
-    if (form.type === 'fare_wrong' && form.proposed_fare === '') return setError('กรุณาใส่ราคาที่ถูกต้อง');
-    if (form.type === 'stop_moved' && !form.stop_id) return setError('กรุณาเลือกจุดที่ย้าย');
+    if (!form.line_id) return setError('เลือกสายก่อน');
+    if (form.type === 'fare_wrong' && form.proposed_fare === '') return setError('ใส่ราคาที่ถูกต้อง');
+    if (form.type === 'stop_moved' && !form.stop_id) return setError('เลือกจุดที่ย้าย');
     try {
       await submitReport({
         type: form.type,
@@ -50,18 +49,18 @@ export default function Report() {
         proposed_fare: form.type === 'fare_wrong' ? Number(form.proposed_fare) : null,
         website: form.website,
       });
-      setMessage('ขอบคุณครับ ทีมจะตรวจสอบก่อนแก้ข้อมูล');
+      setMessage('ส่งแล้ว ทีมจะตรวจก่อนแก้ข้อมูล');
     } catch (err) {
       setError(err.message);
     }
   }
 
   return (
-    <form className="card" onSubmit={handleSubmit}>
-      <h2>แจ้งข้อมูลไม่ถูกต้อง</h2>
+    <form className="report narrow" onSubmit={handleSubmit} aria-labelledby="report-title">
+      <h3 id="report-title">เจอราคาไม่ตรง แจ้งเราได้</h3>
 
       <label htmlFor="report-type">เรื่องที่แจ้ง</label>
-      <select id="report-type" value={form.type} onChange={(e) => set('type')(e.target.value)}>
+      <select id="report-type" className="field" value={form.type} onChange={(e) => set('type')(e.target.value)}>
         {TYPES.map((t) => (
           <option key={t.value} value={t.value}>
             {t.label}
@@ -70,7 +69,7 @@ export default function Report() {
       </select>
 
       <label htmlFor="report-line">สาย</label>
-      <select id="report-line" value={form.line_id} onChange={(e) => set('line_id')(e.target.value)}>
+      <select id="report-line" className="field" value={form.line_id} onChange={(e) => set('line_id')(e.target.value)}>
         <option value="">เลือกสาย</option>
         {lines.map((l) => (
           <option key={l.id} value={l.id}>
@@ -84,6 +83,7 @@ export default function Report() {
           <label htmlFor="report-fare">ราคาที่ถูกต้อง (บาท)</label>
           <input
             id="report-fare"
+            className="field"
             type="number"
             inputMode="decimal"
             min="0"
@@ -114,8 +114,8 @@ export default function Report() {
         />
       </div>
 
-      <button type="submit" className="primary">
-        ส่งข้อมูล
+      <button type="submit" className="go secondary">
+        ส่งให้ทีมตรวจ
       </button>
       {message && <p className="success">{message}</p>}
       {error && (

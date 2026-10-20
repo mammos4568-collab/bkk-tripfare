@@ -142,6 +142,9 @@ export function validateData({ stops, lines, transfers, fares }) {
     if (!isText(line.name_th)) errors.push(`${at}: ไม่มี name_th`);
     if (!MODES.includes(line.mode)) errors.push(`${at}: mode ต้องเป็น ${MODES.join(' / ')}`);
     if (!isText(line.operator)) errors.push(`${at}: ไม่มี operator`);
+    if (line.color !== undefined && !/^#[0-9A-Fa-f]{6}$/.test(line.color)) {
+      errors.push(`${at}: color ต้องเป็นรหัสสีแบบ #RRGGBB`);
+    }
     if (line.bidirectional !== undefined && typeof line.bidirectional !== 'boolean') {
       errors.push(`${at}: bidirectional ต้องเป็น true / false`);
     }

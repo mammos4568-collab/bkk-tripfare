@@ -7,7 +7,6 @@ import { AppError } from './errors.js';
 import { adminRouter } from './routes/admin.js';
 import { authRouter, meRouter } from './routes/auth.js';
 import { meetupRouter } from './routes/meetup.js';
-import { placesRouter } from './routes/places.js';
 import { reportsRouter } from './routes/reports.js';
 import { linesRouter, stopsRouter } from './routes/stops.js';
 import { tripsRouter } from './routes/trips.js';
@@ -19,7 +18,7 @@ export function createApp({ planner, config }) {
   app.set('trust proxy', 1);
 
   // header ความปลอดภัยพื้นฐาน
-  // ส่วน B: ถ้าใช้แผนที่ (Leaflet + OpenStreetMap) ต้องเพิ่มโดเมน tile ใน contentSecurityPolicy img-src
+  // ถ้าเพิ่มแผนที่ (Leaflet + OpenStreetMap) ต้องเพิ่มโดเมน tile ใน contentSecurityPolicy img-src
   app.use(helmet());
   app.use(express.json({ limit: '10kb' }));
 
@@ -30,24 +29,25 @@ export function createApp({ planner, config }) {
       limit: 300,
       standardHeaders: 'draft-7',
       legacyHeaders: false,
-      // ส่วน D: บันทึก security_events kind 'rate_limited' ตรงนี้ได้
+      // เพื่อน: บันทึก security_events kind 'rate_limited' ตรงนี้
       handler: (req, res, next) => next(new AppError(429, 'RATE_LIMITED', 'เรียกใช้งานถี่เกินไป กรุณารอสักครู่')),
     }),
   );
 
-  // ส่วน C: ตั้ง session (express-session + connect-pg-simple) ตรงนี้ ก่อน route ด้านล่าง
+  // เพื่อน: ตั้ง session (express-session + connect-pg-simple) ตรงนี้ ก่อน route ด้านล่าง
 
   // ---------- API ----------
+  // คนหลัก: หน้าเว็บผู้ใช้
   app.get('/api/health', (req, res) => res.json({ status: 'ok', ...planner.info() }));
-  app.use('/api/stops', stopsRouter(planner)); // A
-  app.use('/api/lines', linesRouter(planner)); // A
-  app.use('/api/trips', tripsRouter(planner)); // A
-  app.use('/api/meetup', meetupRouter(planner)); // D
-  app.use('/api/auth', authRouter()); // C
-  app.use('/api/me', meRouter()); // C
-  app.use('/api/places', placesRouter()); // C
-  app.use('/api/reports', reportsRouter()); // D
-  app.use('/api/admin', adminRouter()); // D
+  app.use('/api/stops', stopsRouter(planner));
+  app.use('/api/lines', linesRouter(planner));
+  app.use('/api/trips', tripsRouter(planner));
+  app.use('/api/meetup', meetupRouter(planner)); // ถ้ามีเวลา
+  // เพื่อน: เข้าสู่ระบบและแอดมิน
+  app.use('/api/auth', authRouter());
+  app.use('/api/me', meRouter());
+  app.use('/api/reports', reportsRouter()); // ถ้ามีเวลา
+  app.use('/api/admin', adminRouter());
 
   app.use('/api', (req, res, next) => next(new AppError(404, 'NOT_FOUND', 'ไม่พบ endpoint นี้')));
 
